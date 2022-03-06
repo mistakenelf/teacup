@@ -3,11 +3,13 @@ package filetree
 import (
 	"fmt"
 	"os"
+	"path/filepath"
 
 	"github.com/charmbracelet/bubbles/list"
 	tea "github.com/charmbracelet/bubbletea"
 	"github.com/charmbracelet/lipgloss"
 	"github.com/knipferrc/teacup/dirfs"
+	"github.com/knipferrc/teacup/icons"
 )
 
 type getDirectorylistingMsg []list.Item
@@ -43,12 +45,20 @@ func getDirectoryListingCmd(name string) tea.Cmd {
 				continue
 			}
 
+			icon, color := icons.GetIcon(fileInfo.Name(), filepath.Ext(fileInfo.Name()), icons.GetIndicator(fileInfo.Mode()))
+			fileIcon := lipgloss.NewStyle().Width(2).Render(fmt.Sprintf("%s%s ", color, icon))
+			fileName := lipgloss.NewStyle().
+				Foreground(
+					lipgloss.AdaptiveColor{Dark: "#ffffff", Light: "#000000"},
+				).
+				Render(file.Name())
+
 			status := fmt.Sprintf("%s %s",
 				fileInfo.ModTime().Format("2006-01-02 15:04:05"),
 				fileInfo.Mode().String())
 
 			items = append(items, item{
-				title: file.Name(),
+				title: lipgloss.JoinHorizontal(lipgloss.Top, fileIcon, fileName),
 				desc:  status,
 			})
 		}
