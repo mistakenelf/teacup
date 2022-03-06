@@ -8,7 +8,7 @@
 
 ## About The Project
 
-A filtree bubble for bubbletea apps
+A collection of bubbles and utilities for creating bubbletea applications.
 
 ### Built With
 
@@ -27,4 +27,8 @@ go install github.com/knipferrc/teacup@latest
 
 ## Features
 
-- TBD
+- dirfs - A collection of helper functions for working with the filesystem
+- formatter - A collection of helper functions to convert things to strings (image, syntax highlighting, etc)
+- icons - A package to render file icons
+- help - A bubble to render help text, for example, a keymap
+- filetree - WIP filetree bubble
