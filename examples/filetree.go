@@ -3,25 +3,29 @@ package main
 import (
 	"log"
 
-	"github.com/knipferrc/bubbletree/bubbletree"
-
 	tea "github.com/charmbracelet/bubbletea"
+	"github.com/knipferrc/teacup/filetree"
 )
 
 type Bubble struct {
-	bubbletree bubbletree.Bubble
+	filetree filetree.Bubble
 }
 
 func New() Bubble {
-	return Bubble{}
+	f := filetree.New()
+
+	return Bubble{
+		filetree: f,
+	}
 }
 
 func (b Bubble) Init() tea.Cmd {
-	return nil
+	return b.filetree.Init()
 }
 
 func (b Bubble) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 	var (
+		cmd  tea.Cmd
 		cmds []tea.Cmd
 	)
 
@@ -33,11 +37,14 @@ func (b Bubble) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 		}
 	}
 
+	b.filetree, cmd = b.filetree.Update(msg)
+	cmds = append(cmds, cmd)
+
 	return b, tea.Batch(cmds...)
 }
 
 func (b Bubble) View() string {
-	return b.bubbletree.View()
+	return b.filetree.View()
 }
 
 func main() {
