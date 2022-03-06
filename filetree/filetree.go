@@ -9,11 +9,16 @@ import (
 	tea "github.com/charmbracelet/bubbletea"
 	"github.com/charmbracelet/lipgloss"
 	"github.com/knipferrc/teacup/dirfs"
+	"github.com/knipferrc/teacup/formatter"
 	"github.com/knipferrc/teacup/icons"
 )
 
 type getDirectorylistingMsg []list.Item
-type errorMsg string
+type errorMsg error
+
+const (
+	FileIconWidth = 2
+)
 
 var (
 	listStyle              = lipgloss.NewStyle().Margin(1)
@@ -30,12 +35,12 @@ func getDirectoryListingCmd(name string) tea.Cmd {
 	return func() tea.Msg {
 		files, err := dirfs.GetDirectoryListing(name, true)
 		if err != nil {
-			return errorMsg(err.Error())
+			return errorMsg(err)
 		}
 
 		err = os.Chdir(name)
 		if err != nil {
-			return errorMsg(err.Error())
+			return errorMsg(err)
 		}
 
 		var items []list.Item
@@ -46,16 +51,17 @@ func getDirectoryListingCmd(name string) tea.Cmd {
 			}
 
 			icon, color := icons.GetIcon(fileInfo.Name(), filepath.Ext(fileInfo.Name()), icons.GetIndicator(fileInfo.Mode()))
-			fileIcon := lipgloss.NewStyle().Width(2).Render(fmt.Sprintf("%s%s ", color, icon))
+			fileIcon := lipgloss.NewStyle().Width(FileIconWidth).Render(fmt.Sprintf("%s%s ", color, icon))
 			fileName := lipgloss.NewStyle().
 				Foreground(
 					lipgloss.AdaptiveColor{Dark: "#ffffff", Light: "#000000"},
 				).
 				Render(file.Name())
 
-			status := fmt.Sprintf("%s %s",
+			status := fmt.Sprintf("%s %s %s",
 				fileInfo.ModTime().Format("2006-01-02 15:04:05"),
-				fileInfo.Mode().String())
+				fileInfo.Mode().String(),
+				formatter.ConvertBytesToSizeString(fileInfo.Size()))
 
 			items = append(items, item{
 				title: lipgloss.JoinHorizontal(lipgloss.Top, fileIcon, fileName),
@@ -111,6 +117,8 @@ func (b Bubble) Update(msg tea.Msg) (Bubble, tea.Cmd) {
 		b.list.SetItems(msg)
 
 		return b, nil
+	case errorMsg:
+		return b, b.list.NewStatusMessage(statusMessageErrorStyle(msg.Error()))
 	case tea.WindowSizeMsg:
 		v, h := listStyle.GetFrameSize()
 		b.list.SetSize(msg.Width-h, msg.Height-v)
