@@ -44,7 +44,7 @@ func New() Bubble {
 			{Key: "O", Description: "Show logs if debugging enabled"},
 			{Key: "tab", Description: "Toggle between boxes"},
 		},
-		true,
+		false,
 	)
 
 	return Bubble{
