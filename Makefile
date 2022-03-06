@@ -1,3 +1,3 @@
-.PHONY: example-default
-example-default:
-	@go run ./examples/default.go
+.PHONY: example-filetree
+example-filetree:
+	@go run ./examples/filetree.go
