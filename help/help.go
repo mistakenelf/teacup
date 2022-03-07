@@ -8,7 +8,6 @@ import (
 	"github.com/charmbracelet/lipgloss"
 )
 
-// Constants used for the help bubble.
 const (
 	Padding  = 1
 	KeyWidth = 12
@@ -22,11 +21,10 @@ type Entry struct {
 
 // Bubble represents the struct of the help bubble.
 type Bubble struct {
-	Title       string
-	Entries     []Entry
-	Viewport    viewport.Model
-	BorderColor lipgloss.AdaptiveColor
-	Borderless  bool
+	Viewport   viewport.Model
+	Entries    []Entry
+	Title      string
+	Borderless bool
 }
 
 // generateHelpScreen generates the help text based on the title and entries.
@@ -106,11 +104,6 @@ func (b *Bubble) SetSize(w, h int) {
 	b.Viewport.SetContent(b.generateHelpScreen(b.Entries, b.Title))
 }
 
-// SetBorderColor sets the border color of the help bubble.
-func (b *Bubble) SetBorderColor(color lipgloss.AdaptiveColor) {
-	b.BorderColor = color
-}
-
 // Update handles updating the help bubble.
 func (b Bubble) Update(msg tea.Msg) (Bubble, tea.Cmd) {
 	var (
@@ -140,8 +133,7 @@ func (b Bubble) View() string {
 	b.Viewport.Style = lipgloss.NewStyle().
 		PaddingLeft(Padding).
 		PaddingRight(Padding).
-		Border(border).
-		BorderForeground(b.BorderColor)
+		Border(border)
 
 	return b.Viewport.View()
 }
