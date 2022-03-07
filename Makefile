@@ -6,6 +6,6 @@ example-filetree:
 example-help:
 	@go run ./examples/help/help.go
 
-.PHONY: example-sourcecode
-example-sourcecode:
-	@go run ./examples/sourcecode/sourcecode.go
+.PHONY: example-code
+example-code:
+	@go run ./examples/code/code.go
