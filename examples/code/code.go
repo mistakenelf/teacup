@@ -37,7 +37,7 @@ func (b Bubble) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 		}
 	}
 
-	b.code.SetContent("sourcecode.go")
+	b.code.SetFileName("code/code.go")
 
 	b.code, cmd = b.code.Update(msg)
 	cmds = append(cmds, cmd)
@@ -51,7 +51,7 @@ func (b Bubble) View() string {
 
 func main() {
 	b := New()
-	p := tea.NewProgram(b)
+	p := tea.NewProgram(b, tea.WithAltScreen())
 
 	if err := p.Start(); err != nil {
 		log.Fatal(err)

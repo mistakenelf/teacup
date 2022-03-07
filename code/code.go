@@ -1,7 +1,6 @@
 package code
 
 import (
-	"log"
 	"path/filepath"
 
 	"github.com/charmbracelet/bubbles/viewport"
@@ -14,11 +13,11 @@ import (
 type syntaxMsg string
 type errorMsg error
 
-// Constants used for the text bubble.
 const (
 	Padding = 1
 )
 
+// readFileContentCmd reads the content of the file.
 func readFileContentCmd(fileName string) tea.Cmd {
 	return func() tea.Msg {
 		content, err := dirfs.ReadFileContent(fileName)
@@ -31,21 +30,19 @@ func readFileContentCmd(fileName string) tea.Cmd {
 			return errorMsg(err)
 		}
 
-		log.Println(highlightedContent)
-
 		return syntaxMsg(highlightedContent)
 	}
 }
 
-// Bubble represents the structure of a text bubble.
+// Bubble represents the properties of a code bubble.
 type Bubble struct {
+	Viewport           viewport.Model
 	Borderless         bool
 	Filename           string
 	HighlightedContent string
-	Viewport           viewport.Model
 }
 
-// New creates a new instance of sourcecode.
+// New creates a new instance of code.
 func New(borderless bool) Bubble {
 	viewPort := viewport.New(0, 0)
 	border := lipgloss.NormalBorder()
@@ -69,11 +66,9 @@ func (b Bubble) Init() tea.Cmd {
 	return nil
 }
 
-// SetContent sets the content of text.
-func (b *Bubble) SetContent(filename string) tea.Cmd {
+// SetFileName sets the content of text.
+func (b *Bubble) SetFileName(filename string) {
 	b.Filename = filename
-
-	return readFileContentCmd(filename)
 }
 
 // SetSize sets the size of the bubble.
@@ -81,10 +76,13 @@ func (b *Bubble) SetSize(w, h int) {
 	b.Viewport.Width = w - b.Viewport.Style.GetHorizontalFrameSize()
 	b.Viewport.Height = h - b.Viewport.Style.GetVerticalFrameSize()
 
-	b.Viewport.SetContent(lipgloss.NewStyle().Width(b.Viewport.Width).Height(b.Viewport.Height).Render(b.HighlightedContent))
+	b.Viewport.SetContent(lipgloss.NewStyle().
+		Width(b.Viewport.Width).
+		Height(b.Viewport.Height).
+		Render(b.HighlightedContent))
 }
 
-// Update handles updating the text bubble.
+// Update handles updating the UI of a code bubble.
 func (b Bubble) Update(msg tea.Msg) (Bubble, tea.Cmd) {
 	var (
 		cmd  tea.Cmd
@@ -93,17 +91,30 @@ func (b Bubble) Update(msg tea.Msg) (Bubble, tea.Cmd) {
 
 	switch msg := msg.(type) {
 	case syntaxMsg:
-		b.HighlightedContent = lipgloss.NewStyle().Width(b.Viewport.Width).Height(b.Viewport.Height).Render(string(msg))
+		b.Filename = ""
+		b.HighlightedContent = lipgloss.NewStyle().
+			Width(b.Viewport.Width).
+			Height(b.Viewport.Height).
+			Render(string(msg))
+
 		b.Viewport.SetContent(b.HighlightedContent)
 
 		return b, nil
 	case errorMsg:
-		b.HighlightedContent = lipgloss.NewStyle().Width(b.Viewport.Width).Height(b.Viewport.Height).Render("Error: " + msg.Error())
+		b.HighlightedContent = lipgloss.NewStyle().
+			Width(b.Viewport.Width).
+			Height(b.Viewport.Height).
+			Render("Error: " + msg.Error())
+
 		b.Viewport.SetContent(b.HighlightedContent)
 
 		return b, nil
 	case tea.WindowSizeMsg:
 		b.SetSize(msg.Width, msg.Height)
+	}
+
+	if b.Filename != "" {
+		cmds = append(cmds, readFileContentCmd(b.Filename))
 	}
 
 	b.Viewport, cmd = b.Viewport.Update(msg)
@@ -112,7 +123,7 @@ func (b Bubble) Update(msg tea.Msg) (Bubble, tea.Cmd) {
 	return b, tea.Batch(cmds...)
 }
 
-// View returns the content of text.
+// View returns a string representation of the code bubble.
 func (b Bubble) View() string {
 	border := lipgloss.NormalBorder()
 
