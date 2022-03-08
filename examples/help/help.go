@@ -8,10 +8,12 @@ import (
 	"github.com/knipferrc/teacup/help"
 )
 
+// Bubble represents the properties of the UI.
 type Bubble struct {
 	help help.Bubble
 }
 
+// New create a new instance of the UI.
 func New() Bubble {
 	helpModel := help.New(
 		lipgloss.AdaptiveColor{Light: "#000000", Dark: "#ffffff"},
@@ -52,10 +54,12 @@ func New() Bubble {
 	}
 }
 
+// Init initializes the application.
 func (b Bubble) Init() tea.Cmd {
 	return nil
 }
 
+// Update handles all UI interactions.
 func (b Bubble) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 	var (
 		cmd  tea.Cmd
@@ -76,6 +80,7 @@ func (b Bubble) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 	return b, tea.Batch(cmds...)
 }
 
+// View renders the UI.
 func (b Bubble) View() string {
 	return b.help.View()
 }

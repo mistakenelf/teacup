@@ -1,3 +1,5 @@
+// Package help implements a help bubble which can be used
+// to display help information such as keymaps.
 package help
 
 import (
@@ -8,6 +10,7 @@ import (
 	"github.com/charmbracelet/lipgloss"
 )
 
+// Constants used throughout the help bubble.
 const (
 	Padding  = 1
 	KeyWidth = 12
@@ -19,16 +22,17 @@ type Entry struct {
 	Description string
 }
 
-// Bubble represents the struct of the help bubble.
+// Bubble represents the properties of a help bubble.
 type Bubble struct {
-	Viewport   viewport.Model
-	Entries    []Entry
-	Title      string
-	Borderless bool
+	Viewport    viewport.Model
+	Entries     []Entry
+	BorderColor lipgloss.AdaptiveColor
+	Title       string
+	Borderless  bool
 }
 
 // generateHelpScreen generates the help text based on the title and entries.
-func (b Bubble) generateHelpScreen(entries []Entry, title string) string {
+func generateHelpScreen(title string, entries []Entry, width, height int) string {
 	helpScreen := ""
 
 	for _, content := range entries {
@@ -59,8 +63,8 @@ func (b Bubble) generateHelpScreen(entries []Entry, title string) string {
 		Render(title)
 
 	return lipgloss.NewStyle().
-		Width(b.Viewport.Width).
-		Height(b.Viewport.Height).
+		Width(width).
+		Height(height).
 		Render(lipgloss.JoinVertical(
 			lipgloss.Top,
 			welcomeText,
@@ -68,7 +72,7 @@ func (b Bubble) generateHelpScreen(entries []Entry, title string) string {
 		))
 }
 
-// New creates a new help bubble.
+// New creates a new instance of a help bubble.
 func New(
 	borderColor lipgloss.AdaptiveColor,
 	title string,
@@ -88,11 +92,14 @@ func New(
 		Border(border).
 		BorderForeground(borderColor)
 
+	viewPort.SetContent(generateHelpScreen(title, entries, 0, 0))
+
 	return Bubble{
-		Viewport:   viewPort,
-		Entries:    entries,
-		Title:      title,
-		Borderless: borderless,
+		Viewport:    viewPort,
+		Entries:     entries,
+		Title:       title,
+		Borderless:  borderless,
+		BorderColor: borderColor,
 	}
 }
 
@@ -101,10 +108,15 @@ func (b *Bubble) SetSize(w, h int) {
 	b.Viewport.Width = w - b.Viewport.Style.GetHorizontalFrameSize()
 	b.Viewport.Height = h - b.Viewport.Style.GetVerticalFrameSize()
 
-	b.Viewport.SetContent(b.generateHelpScreen(b.Entries, b.Title))
+	b.Viewport.SetContent(generateHelpScreen(b.Title, b.Entries, b.Viewport.Width, b.Viewport.Height))
 }
 
-// Update handles updating the help bubble.
+// SetBorderColor sets the current color of the border.
+func (b *Bubble) SetBorderColor(color lipgloss.AdaptiveColor) {
+	b.BorderColor = color
+}
+
+// Update handles UI interactions with the help bubble.
 func (b Bubble) Update(msg tea.Msg) (Bubble, tea.Cmd) {
 	var (
 		cmd  tea.Cmd
@@ -133,7 +145,8 @@ func (b Bubble) View() string {
 	b.Viewport.Style = lipgloss.NewStyle().
 		PaddingLeft(Padding).
 		PaddingRight(Padding).
-		Border(border)
+		Border(border).
+		BorderForeground(b.BorderColor)
 
 	return b.Viewport.View()
 }

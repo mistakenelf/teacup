@@ -1,21 +1,36 @@
+// Package code implements a code bubble which renders syntax highlighted
+// source code based on a filename.
 package code
 
 import (
+	"bytes"
+	"fmt"
 	"path/filepath"
 
+	"github.com/alecthomas/chroma/quick"
 	"github.com/charmbracelet/bubbles/viewport"
 	tea "github.com/charmbracelet/bubbletea"
 	"github.com/charmbracelet/lipgloss"
 	"github.com/knipferrc/teacup/dirfs"
-	"github.com/knipferrc/teacup/formatter"
 )
 
 type syntaxMsg string
 type errorMsg error
 
+// Constants used throughout.
 const (
 	Padding = 1
 )
+
+// Highlight returns a syntax highlighted string of text.
+func Highlight(content, extension, syntaxTheme string) (string, error) {
+	buf := new(bytes.Buffer)
+	if err := quick.Highlight(buf, content, extension, "terminal256", syntaxTheme); err != nil {
+		return "", fmt.Errorf("%w", err)
+	}
+
+	return buf.String(), nil
+}
 
 // readFileContentCmd reads the content of the file.
 func readFileContentCmd(fileName string) tea.Cmd {
@@ -25,7 +40,7 @@ func readFileContentCmd(fileName string) tea.Cmd {
 			return errorMsg(err)
 		}
 
-		highlightedContent, err := formatter.Highlight(content, filepath.Ext(fileName), "dracula")
+		highlightedContent, err := Highlight(content, filepath.Ext(fileName), "dracula")
 		if err != nil {
 			return errorMsg(err)
 		}
@@ -37,13 +52,15 @@ func readFileContentCmd(fileName string) tea.Cmd {
 // Bubble represents the properties of a code bubble.
 type Bubble struct {
 	Viewport           viewport.Model
+	BorderColor        lipgloss.AdaptiveColor
 	Borderless         bool
+	ExternalResize     bool
 	Filename           string
 	HighlightedContent string
 }
 
 // New creates a new instance of code.
-func New(borderless bool) Bubble {
+func New(borderless bool, borderColor lipgloss.AdaptiveColor) Bubble {
 	viewPort := viewport.New(0, 0)
 	border := lipgloss.NormalBorder()
 
@@ -54,25 +71,34 @@ func New(borderless bool) Bubble {
 	viewPort.Style = lipgloss.NewStyle().
 		PaddingLeft(Padding).
 		PaddingRight(Padding).
-		Border(border)
+		Border(border).
+		BorderForeground(borderColor)
 
 	return Bubble{
-		Viewport:   viewPort,
-		Borderless: borderless,
+		Viewport:    viewPort,
+		Borderless:  borderless,
+		BorderColor: borderColor,
 	}
 }
 
+// Init initializes the code bubble.
 func (b Bubble) Init() tea.Cmd {
 	return nil
 }
 
-// SetFileName sets the content of text.
+// SetFileName sets current file to highlight.
 func (b *Bubble) SetFileName(filename string) {
 	b.Filename = filename
 }
 
+// SetBorderColor sets the current color of the border.
+func (b *Bubble) SetBorderColor(color lipgloss.AdaptiveColor) {
+	b.BorderColor = color
+}
+
 // SetSize sets the size of the bubble.
 func (b *Bubble) SetSize(w, h int) {
+	b.ExternalResize = true
 	b.Viewport.Width = w - b.Viewport.Style.GetHorizontalFrameSize()
 	b.Viewport.Height = h - b.Viewport.Style.GetVerticalFrameSize()
 
@@ -89,6 +115,10 @@ func (b Bubble) Update(msg tea.Msg) (Bubble, tea.Cmd) {
 		cmds []tea.Cmd
 	)
 
+	if b.Filename != "" {
+		cmds = append(cmds, readFileContentCmd(b.Filename))
+	}
+
 	switch msg := msg.(type) {
 	case syntaxMsg:
 		b.Filename = ""
@@ -101,6 +131,7 @@ func (b Bubble) Update(msg tea.Msg) (Bubble, tea.Cmd) {
 
 		return b, nil
 	case errorMsg:
+		b.Filename = ""
 		b.HighlightedContent = lipgloss.NewStyle().
 			Width(b.Viewport.Width).
 			Height(b.Viewport.Height).
@@ -110,11 +141,15 @@ func (b Bubble) Update(msg tea.Msg) (Bubble, tea.Cmd) {
 
 		return b, nil
 	case tea.WindowSizeMsg:
-		b.SetSize(msg.Width, msg.Height)
-	}
+		if !b.ExternalResize {
+			b.Viewport.Width = msg.Width - b.Viewport.Style.GetHorizontalFrameSize()
+			b.Viewport.Height = msg.Height - b.Viewport.Style.GetVerticalFrameSize()
 
-	if b.Filename != "" {
-		cmds = append(cmds, readFileContentCmd(b.Filename))
+			b.Viewport.SetContent(lipgloss.NewStyle().
+				Width(b.Viewport.Width).
+				Height(b.Viewport.Height).
+				Render(b.HighlightedContent))
+		}
 	}
 
 	b.Viewport, cmd = b.Viewport.Update(msg)
@@ -134,7 +169,8 @@ func (b Bubble) View() string {
 	b.Viewport.Style = lipgloss.NewStyle().
 		PaddingLeft(Padding).
 		PaddingRight(Padding).
-		Border(border)
+		Border(border).
+		BorderForeground(b.BorderColor)
 
 	return b.Viewport.View()
 }
