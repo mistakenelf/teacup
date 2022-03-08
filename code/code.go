@@ -54,7 +54,6 @@ type Bubble struct {
 	Viewport           viewport.Model
 	BorderColor        lipgloss.AdaptiveColor
 	Borderless         bool
-	ExternalResize     bool
 	Filename           string
 	HighlightedContent string
 }
@@ -87,8 +86,10 @@ func (b Bubble) Init() tea.Cmd {
 }
 
 // SetFileName sets current file to highlight.
-func (b *Bubble) SetFileName(filename string) {
+func (b *Bubble) SetFileName(filename string) tea.Cmd {
 	b.Filename = filename
+
+	return readFileContentCmd(filename)
 }
 
 // SetBorderColor sets the current color of the border.
@@ -98,7 +99,6 @@ func (b *Bubble) SetBorderColor(color lipgloss.AdaptiveColor) {
 
 // SetSize sets the size of the bubble.
 func (b *Bubble) SetSize(w, h int) {
-	b.ExternalResize = true
 	b.Viewport.Width = w - b.Viewport.Style.GetHorizontalFrameSize()
 	b.Viewport.Height = h - b.Viewport.Style.GetVerticalFrameSize()
 
@@ -114,10 +114,6 @@ func (b Bubble) Update(msg tea.Msg) (Bubble, tea.Cmd) {
 		cmd  tea.Cmd
 		cmds []tea.Cmd
 	)
-
-	if b.Filename != "" {
-		cmds = append(cmds, readFileContentCmd(b.Filename))
-	}
 
 	switch msg := msg.(type) {
 	case syntaxMsg:
@@ -140,16 +136,6 @@ func (b Bubble) Update(msg tea.Msg) (Bubble, tea.Cmd) {
 		b.Viewport.SetContent(b.HighlightedContent)
 
 		return b, nil
-	case tea.WindowSizeMsg:
-		if !b.ExternalResize {
-			b.Viewport.Width = msg.Width - b.Viewport.Style.GetHorizontalFrameSize()
-			b.Viewport.Height = msg.Height - b.Viewport.Style.GetVerticalFrameSize()
-
-			b.Viewport.SetContent(lipgloss.NewStyle().
-				Width(b.Viewport.Width).
-				Height(b.Viewport.Height).
-				Render(b.HighlightedContent))
-		}
 	}
 
 	b.Viewport, cmd = b.Viewport.Update(msg)

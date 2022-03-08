@@ -16,7 +16,6 @@ type Bubble struct {
 // New creates a new instance of the UI.
 func New() Bubble {
 	codeModel := code.New(false, lipgloss.AdaptiveColor{Light: "#000000", Dark: "#ffffff"})
-	codeModel.Filename = "code/code.go"
 
 	return Bubble{
 		code: codeModel,
@@ -25,7 +24,9 @@ func New() Bubble {
 
 // Init intializes the UI.
 func (b Bubble) Init() tea.Cmd {
-	return nil
+	cmd := b.code.SetFileName("code/code.go")
+
+	return cmd
 }
 
 // Update handles all UI interactions.
@@ -36,6 +37,10 @@ func (b Bubble) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 	)
 
 	switch msg := msg.(type) {
+	case tea.WindowSizeMsg:
+		b.code.SetSize(msg.Width/2, msg.Height)
+
+		return b, nil
 	case tea.KeyMsg:
 		switch msg.String() {
 		case "ctrl+c", "esc", "q":
