@@ -1,3 +1,4 @@
+// Package dirfs implements various filesystem operations.
 package dirfs
 
 import (
@@ -30,7 +31,7 @@ const (
 func RenameDirectoryItem(src, dst string) error {
 	err := os.Rename(src, dst)
 
-	return err
+	return fmt.Errorf("%w", err)
 }
 
 // CreateDirectory creates a new directory given a name.
@@ -38,7 +39,7 @@ func CreateDirectory(name string) error {
 	if _, err := os.Stat(name); errors.Is(err, os.ErrNotExist) {
 		err := os.Mkdir(name, os.ModePerm)
 		if err != nil {
-			return err
+			return fmt.Errorf("%w", err)
 		}
 	}
 
@@ -47,11 +48,11 @@ func CreateDirectory(name string) error {
 
 // GetDirectoryListing returns a list of files and directories within a given directory.
 func GetDirectoryListing(dir string, showHidden bool) ([]fs.DirEntry, error) {
-	n := 0
+	index := 0
 
 	files, err := os.ReadDir(dir)
 	if err != nil {
-		return nil, err
+		return nil, fmt.Errorf("%w", err)
 	}
 
 	if !showHidden {
@@ -60,13 +61,13 @@ func GetDirectoryListing(dir string, showHidden bool) ([]fs.DirEntry, error) {
 			// we know its hidden so dont add it to the array
 			// of files to return.
 			if !strings.HasPrefix(file.Name(), ".") {
-				files[n] = file
-				n++
+				files[index] = file
+				index++
 			}
 		}
 
 		// Set files to the list that does not include hidden files.
-		files = files[:n]
+		files = files[:index]
 	}
 
 	return files, nil
@@ -74,49 +75,49 @@ func GetDirectoryListing(dir string, showHidden bool) ([]fs.DirEntry, error) {
 
 // GetDirectoryListingByType returns a directory listing based on type (directories | files).
 func GetDirectoryListingByType(dir, listingType string, showHidden bool) ([]fs.DirEntry, error) {
-	n := 0
+	index := 0
 
 	files, err := os.ReadDir(dir)
 	if err != nil {
-		return nil, err
+		return nil, fmt.Errorf("%w", err)
 	}
 
 	for _, file := range files {
 		switch {
 		case file.IsDir() && listingType == DirectoriesListingType && !showHidden:
 			if !strings.HasPrefix(file.Name(), ".") {
-				files[n] = file
-				n++
+				files[index] = file
+				index++
 			}
 		case file.IsDir() && listingType == DirectoriesListingType && showHidden:
-			files[n] = file
-			n++
+			files[index] = file
+			index++
 		case !file.IsDir() && listingType == FilesListingType && !showHidden:
 			if !strings.HasPrefix(file.Name(), ".") {
-				files[n] = file
-				n++
+				files[index] = file
+				index++
 			}
 		case !file.IsDir() && listingType == FilesListingType && showHidden:
-			files[n] = file
-			n++
+			files[index] = file
+			index++
 		}
 	}
 
-	return files[:n], nil
+	return files[:index], nil
 }
 
 // DeleteDirectory deletes a directory given a name.
 func DeleteDirectory(name string) error {
 	err := os.RemoveAll(name)
 
-	return err
+	return fmt.Errorf("%w", err)
 }
 
 // GetHomeDirectory returns the users home directory.
 func GetHomeDirectory() (string, error) {
 	home, err := os.UserHomeDir()
 	if err != nil {
-		return "", err
+		return "", fmt.Errorf("%w", err)
 	}
 
 	return home, nil
@@ -126,7 +127,7 @@ func GetHomeDirectory() (string, error) {
 func GetWorkingDirectory() (string, error) {
 	workingDir, err := os.Getwd()
 	if err != nil {
-		return "", err
+		return "", fmt.Errorf("%w", err)
 	}
 
 	return workingDir, nil
@@ -136,21 +137,21 @@ func GetWorkingDirectory() (string, error) {
 func DeleteFile(name string) error {
 	err := os.Remove(name)
 
-	return err
+	return fmt.Errorf("%w", err)
 }
 
 // MoveDirectoryItem moves a file from one place to another.
 func MoveDirectoryItem(src, dst string) error {
 	err := os.Rename(src, dst)
 
-	return err
+	return fmt.Errorf("%w", err)
 }
 
 // ReadFileContent returns the contents of a file given a name.
 func ReadFileContent(name string) (string, error) {
-	fileContent, err := os.ReadFile(name)
+	fileContent, err := os.ReadFile(filepath.Clean(name))
 	if err != nil {
-		return "", err
+		return "", fmt.Errorf("%w", err)
 	}
 
 	return string(fileContent), nil
@@ -158,16 +159,16 @@ func ReadFileContent(name string) (string, error) {
 
 // CreateFile creates a file given a name.
 func CreateFile(name string) error {
-	f, err := os.OpenFile(name, os.O_APPEND|os.O_CREATE|os.O_WRONLY, os.ModePerm)
+	f, err := os.OpenFile(filepath.Clean(name), os.O_APPEND|os.O_CREATE|os.O_WRONLY, os.ModePerm)
 	if err != nil {
-		return err
+		return fmt.Errorf("%w", err)
 	}
 
 	if err = f.Close(); err != nil {
-		return err
+		return fmt.Errorf("%w", err)
 	}
 
-	return err
+	return fmt.Errorf("%w", err)
 }
 
 // Zip zips a directory given a name.
@@ -175,9 +176,9 @@ func Zip(name string) error {
 	var splitName []string
 	var output string
 
-	srcFile, err := os.Open(name)
+	srcFile, err := os.Open(filepath.Clean(name))
 	if err != nil {
-		return err
+		return fmt.Errorf("%w", err)
 	}
 
 	defer func() {
@@ -198,9 +199,9 @@ func Zip(name string) error {
 		output = fmt.Sprintf("%s_%d.zip", name, time.Now().Unix())
 	}
 
-	newfile, err := os.Create(output)
+	newfile, err := os.Create(filepath.Clean(output))
 	if err != nil {
-		return err
+		return fmt.Errorf("%w", err)
 	}
 
 	defer func() {
@@ -214,7 +215,7 @@ func Zip(name string) error {
 
 	info, err := os.Stat(name)
 	if err != nil {
-		return err
+		return fmt.Errorf("%w", err)
 	}
 
 	if info.IsDir() {
@@ -224,23 +225,23 @@ func Zip(name string) error {
 			}
 
 			if err != nil {
-				return err
+				return fmt.Errorf("%w", err)
 			}
 
 			relPath := strings.TrimPrefix(filePath, name)
 			zipFile, err := zipWriter.Create(relPath)
 			if err != nil {
-				return err
+				return fmt.Errorf("%w", err)
 			}
 
-			fsFile, err := os.Open(filePath)
+			fsFile, err := os.Open(filepath.Clean(filePath))
 			if err != nil {
-				return err
+				return fmt.Errorf("%w", err)
 			}
 
 			_, err = io.Copy(zipFile, fsFile)
 			if err != nil {
-				return err
+				return fmt.Errorf("%w", err)
 			}
 
 			return nil
@@ -259,13 +260,13 @@ func Zip(name string) error {
 		})
 
 		if err != nil {
-			return err
+			return fmt.Errorf("%w", err)
 		}
 
 		for _, file := range files {
-			zipfile, err := os.Open(file)
+			zipfile, err := os.Open(filepath.Clean(file))
 			if err != nil {
-				return err
+				return fmt.Errorf("%w", err)
 			}
 
 			defer func() {
@@ -274,46 +275,46 @@ func Zip(name string) error {
 
 			info, err := zipfile.Stat()
 			if err != nil {
-				return err
+				return fmt.Errorf("%w", err)
 			}
 
 			header, err := zip.FileInfoHeader(info)
 			if err != nil {
-				return err
+				return fmt.Errorf("%w", err)
 			}
 
 			header.Method = zip.Deflate
 			writer, err := zipWriter.CreateHeader(header)
 			if err != nil {
-				return err
+				return fmt.Errorf("%w", err)
 			}
 
 			_, err = io.Copy(writer, zipfile)
 			if err != nil {
-				return err
+				return fmt.Errorf("%w", err)
 			}
 		}
 	}
 
 	err = zipWriter.Close()
 	if err != nil {
-		return err
+		return fmt.Errorf("%w", err)
 	}
 
-	return err
+	return fmt.Errorf("%w", err)
 }
 
 // Unzip unzips a directory given a name.
 func Unzip(name string) error {
 	var output string
 
-	r, err := zip.OpenReader(name)
+	reader, err := zip.OpenReader(name)
 	if err != nil {
-		return err
+		return fmt.Errorf("%w", err)
 	}
 
 	defer func() {
-		err = r.Close()
+		err = reader.Close()
 	}()
 
 	if strings.HasPrefix(name, ".") {
@@ -322,58 +323,58 @@ func Unzip(name string) error {
 		output = strings.Split(name, ".")[0]
 	}
 
-	for _, f := range r.File {
-		archiveFile := f.Name
+	for _, file := range reader.File {
+		archiveFile := file.Name
 		fpath := filepath.Join(output, archiveFile)
 
 		if !strings.HasPrefix(fpath, filepath.Clean(output)+string(os.PathSeparator)) {
-			return err
+			return fmt.Errorf("%w", err)
 		}
 
-		if f.FileInfo().IsDir() {
+		if file.FileInfo().IsDir() {
 			err = os.MkdirAll(fpath, os.ModePerm)
 			if err != nil {
-				return err
+				return fmt.Errorf("%w", err)
 			}
 
 			continue
 		}
 
 		if err = os.MkdirAll(filepath.Dir(fpath), os.ModePerm); err != nil {
-			return err
+			return fmt.Errorf("%w", err)
 		}
 
-		outFile, err := os.OpenFile(fpath, os.O_WRONLY|os.O_CREATE|os.O_TRUNC, f.Mode())
+		outFile, err := os.OpenFile(filepath.Clean(fpath), os.O_WRONLY|os.O_CREATE|os.O_TRUNC, file.Mode())
 		if err != nil {
-			return err
+			return fmt.Errorf("%w", err)
 		}
 
-		rc, err := f.Open()
+		outputFile, err := file.Open()
 		if err != nil {
-			return err
+			return fmt.Errorf("%w", err)
 		}
 
-		_, err = io.Copy(outFile, rc)
+		_, err = io.Copy(outFile, outputFile)
 		if err != nil {
-			return err
+			return fmt.Errorf("%w", err)
 		}
 
 		err = outFile.Close()
 		if err != nil {
-			return err
+			return fmt.Errorf("%w", err)
 		}
 
-		err = rc.Close()
+		err = outputFile.Close()
 		if err != nil {
-			return err
+			return fmt.Errorf("%w", err)
 		}
 
 		if err != nil {
-			return err
+			return fmt.Errorf("%w", err)
 		}
 	}
 
-	return err
+	return fmt.Errorf("%w", err)
 }
 
 // CopyFile copies a file given a name.
@@ -381,9 +382,9 @@ func CopyFile(name string) error {
 	var splitName []string
 	var output string
 
-	srcFile, err := os.Open(name)
+	srcFile, err := os.Open(filepath.Clean(name))
 	if err != nil {
-		return err
+		return fmt.Errorf("%w", err)
 	}
 
 	defer func() {
@@ -404,9 +405,9 @@ func CopyFile(name string) error {
 		output = fmt.Sprintf("%s_%d", name, time.Now().Unix())
 	}
 
-	destFile, err := os.Create(output)
+	destFile, err := os.Create(filepath.Clean(output))
 	if err != nil {
-		return err
+		return fmt.Errorf("%w", err)
 	}
 
 	defer func() {
@@ -415,15 +416,15 @@ func CopyFile(name string) error {
 
 	_, err = io.Copy(destFile, srcFile)
 	if err != nil {
-		return err
+		return fmt.Errorf("%w", err)
 	}
 
 	err = destFile.Sync()
 	if err != nil {
-		return err
+		return fmt.Errorf("%w", err)
 	}
 
-	return err
+	return fmt.Errorf("%w", err)
 }
 
 // CopyDirectory copies a directory given a name.
@@ -434,25 +435,25 @@ func CopyDirectory(name string) error {
 		relPath := strings.Replace(path, name, "", 1)
 
 		if info.IsDir() {
-			return os.Mkdir(filepath.Join(output, relPath), os.ModePerm)
+			return fmt.Errorf("%w", os.Mkdir(filepath.Join(output, relPath), os.ModePerm))
 		}
 
-		var data, err1 = os.ReadFile(filepath.Join(name, relPath))
+		var data, err1 = os.ReadFile(filepath.Join(filepath.Clean(name), filepath.Clean(relPath)))
 		if err1 != nil {
-			return err1
+			return fmt.Errorf("%w", err)
 		}
 
-		return os.WriteFile(filepath.Join(output, relPath), data, os.ModePerm)
+		return fmt.Errorf("%w", os.WriteFile(filepath.Join(output, relPath), data, os.ModePerm))
 	})
 
-	return err
+	return fmt.Errorf("%w", err)
 }
 
 // GetDirectoryItemSize calculates the size of a directory or file.
 func GetDirectoryItemSize(path string) (int64, error) {
 	curFile, err := os.Stat(path)
 	if err != nil {
-		return 0, err
+		return 0, fmt.Errorf("%w", err)
 	}
 
 	if !curFile.IsDir() {
@@ -460,24 +461,24 @@ func GetDirectoryItemSize(path string) (int64, error) {
 	}
 
 	var size int64
-	err = filepath.WalkDir(path, func(path string, d os.DirEntry, err error) error {
+	err = filepath.WalkDir(path, func(path string, entry os.DirEntry, err error) error {
 		if err != nil {
-			return err
+			return fmt.Errorf("%w", err)
 		}
 
-		fileInfo, err := d.Info()
+		fileInfo, err := entry.Info()
 		if err != nil {
-			return err
+			return fmt.Errorf("%w", err)
 		}
 
-		if !d.IsDir() {
+		if !entry.IsDir() {
 			size += fileInfo.Size()
 		}
 
-		return err
+		return fmt.Errorf("%w", err)
 	})
 
-	return size, err
+	return size, fmt.Errorf("%w", err)
 }
 
 // FindFilesByName returns files found based on a name.
@@ -495,34 +496,38 @@ func FindFilesByName(name, dir string) ([]string, []fs.DirEntry, error) {
 			entries = append(entries, entry)
 		}
 
-		return err
+		return fmt.Errorf("%w", err)
 	})
 
-	return paths, entries, err
+	return paths, entries, fmt.Errorf("%w", err)
 }
 
 // WriteToFile writes content to a file, overwriting content if it exists.
 func WriteToFile(path, content string) error {
-	f, err := os.OpenFile(path, os.O_CREATE|os.O_WRONLY|os.O_TRUNC, os.ModePerm)
+	file, err := os.OpenFile(filepath.Clean(path), os.O_CREATE|os.O_WRONLY|os.O_TRUNC, os.ModePerm)
 	if err != nil {
-		return err
+		return fmt.Errorf("%w", err)
 	}
 
 	workingDir, err := os.Getwd()
 	if err != nil {
-		return err
+		return fmt.Errorf("%w", err)
 	}
 
-	_, err = f.WriteString(fmt.Sprintf("%s\n", filepath.Join(workingDir, content)))
+	_, err = file.WriteString(fmt.Sprintf("%s\n", filepath.Join(workingDir, content)))
 	if err != nil {
-		f.Close()
-		return err
+		err = file.Close()
+		if err != nil {
+			return fmt.Errorf("%w", err)
+		}
+
+		return fmt.Errorf("%w", err)
 	}
 
-	err = f.Close()
+	err = file.Close()
 	if err != nil {
-		return err
+		return fmt.Errorf("%w", err)
 	}
 
-	return err
+	return fmt.Errorf("%w", err)
 }
