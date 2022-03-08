@@ -9,3 +9,7 @@ example-help:
 .PHONY: example-code
 example-code:
 	@go run ./examples/code/code.go
+
+.PHONY: example-image
+example-image:
+	@go run ./examples/image/image.go
