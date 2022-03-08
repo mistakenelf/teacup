@@ -1,4 +1,5 @@
-# https://golangci-lint.run/usage/linters/
+issues:
+  exclude-use-default: false
 linters:
   enable:
     - asciicheck
