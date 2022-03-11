@@ -38,7 +38,7 @@ func (b Bubble) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 
 	switch msg := msg.(type) {
 	case tea.WindowSizeMsg:
-		b.code.SetSize(msg.Width/2, msg.Height)
+		b.code.SetSize(msg.Width, msg.Height)
 
 		return b, nil
 	case tea.KeyMsg:

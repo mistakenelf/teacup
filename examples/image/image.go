@@ -36,7 +36,7 @@ func (b Bubble) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 
 	switch msg := msg.(type) {
 	case tea.WindowSizeMsg:
-		b.image.SetSize(msg.Width/2, msg.Height)
+		b.image.SetSize(msg.Width, msg.Height)
 		cmds = append(cmds, b.image.SetFileName("examples/image/bubbletea.png"))
 
 		return b, tea.Batch(cmds...)

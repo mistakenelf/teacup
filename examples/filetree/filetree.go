@@ -4,25 +4,30 @@ import (
 	"log"
 
 	tea "github.com/charmbracelet/bubbletea"
+	"github.com/charmbracelet/lipgloss"
 	"github.com/knipferrc/teacup/filetree"
 )
 
+// Bubble represents the properties of the UI.
 type Bubble struct {
 	filetree filetree.Bubble
 }
 
+// New creates a new instance of the UI.
 func New() Bubble {
-	f := filetree.New()
+	f := filetree.New(lipgloss.AdaptiveColor{Light: "#000000", Dark: "#ffffff"}, false)
 
 	return Bubble{
 		filetree: f,
 	}
 }
 
+// Init intializes the UI.
 func (b Bubble) Init() tea.Cmd {
 	return b.filetree.Init()
 }
 
+// Update handles all UI interactions.
 func (b Bubble) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 	var (
 		cmd  tea.Cmd
@@ -30,6 +35,8 @@ func (b Bubble) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 	)
 
 	switch msg := msg.(type) {
+	case tea.WindowSizeMsg:
+		b.filetree.SetSize(msg.Width, msg.Height)
 	case tea.KeyMsg:
 		switch msg.String() {
 		case "ctrl+c", "esc", "q":
@@ -43,6 +50,7 @@ func (b Bubble) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 	return b, tea.Batch(cmds...)
 }
 
+// View returns a string representation of the UI.
 func (b Bubble) View() string {
 	return b.filetree.View()
 }
