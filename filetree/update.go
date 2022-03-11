@@ -43,6 +43,8 @@ func (b Bubble) Update(msg tea.Msg) (Bubble, tea.Cmd) {
 	case getDirectoryListingMsg:
 		cmd = b.list.SetItems(msg)
 		cmds = append(cmds, cmd)
+	case copyToClipboardMsg:
+		return b, b.list.NewStatusMessage(statusMessageInfoStyle(string(msg)))
 	case errorMsg:
 		return b, b.list.NewStatusMessage(statusMessageErrorStyle(msg.Error()))
 	case tea.KeyMsg:
@@ -119,6 +121,15 @@ func (b Bubble) Update(msg tea.Msg) (Bubble, tea.Cmd) {
 			if !b.input.Focused() {
 				b.showHidden = !b.showHidden
 				cmds = append(cmds, getDirectoryListingCmd(dirfs.CurrentDirectory, b.showHidden))
+			}
+		case key.Matches(msg, homeShortcutKey):
+			if !b.input.Focused() {
+				cmds = append(cmds, getDirectoryListingCmd(dirfs.HomeDirectory, b.showHidden))
+			}
+		case key.Matches(msg, copyToClipboardKey):
+			if !b.input.Focused() {
+				selectedItem := b.GetSelectedItem()
+				cmds = append(cmds, copyToClipboardCmd(selectedItem.fileName))
 			}
 		case key.Matches(msg, submitInputKey):
 			switch b.state {

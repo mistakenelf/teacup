@@ -7,6 +7,7 @@ import (
 	"os"
 	"path/filepath"
 
+	"github.com/atotto/clipboard"
 	"github.com/charmbracelet/bubbles/list"
 	tea "github.com/charmbracelet/bubbletea"
 	"github.com/charmbracelet/lipgloss"
@@ -17,16 +18,27 @@ import (
 
 type getDirectoryListingMsg []list.Item
 type errorMsg error
+type copyToClipboardMsg string
 
 // getDirectoryListingCmd updates the directory listing based on the name of the directory provided.
 func getDirectoryListingCmd(name string, showHidden bool) tea.Cmd {
 	return func() tea.Msg {
-		files, err := dirfs.GetDirectoryListing(name, showHidden)
+		var err error
+		directoryName := name
+
+		if name == dirfs.HomeDirectory {
+			directoryName, err = dirfs.GetHomeDirectory()
+			if err != nil {
+				return errorMsg(err)
+			}
+		}
+
+		files, err := dirfs.GetDirectoryListing(directoryName, showHidden)
 		if err != nil {
 			return errorMsg(err)
 		}
 
-		err = os.Chdir(name)
+		err = os.Chdir(directoryName)
 		if err != nil {
 			return errorMsg(err)
 		}
@@ -157,5 +169,17 @@ func copyItemCmd(name string) tea.Cmd {
 		}
 
 		return nil
+	}
+}
+
+// copyToClipboardCmd copies the provided string to the clipboard.
+func copyToClipboardCmd(name string) tea.Cmd {
+	return func() tea.Msg {
+		err := clipboard.WriteAll(name)
+		if err != nil {
+			return errorMsg(err)
+		}
+
+		return copyToClipboardMsg(fmt.Sprintf("%s %s %s", "Successfully copied", name, "to clipboard"))
 	}
 }

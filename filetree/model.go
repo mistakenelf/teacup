@@ -57,6 +57,8 @@ func New(borderColor lipgloss.AdaptiveColor, borderless bool) Bubble {
 			zipItemKey,
 			unzipItemKey,
 			toggleHiddenKey,
+			homeShortcutKey,
+			copyToClipboardKey,
 			submitInputKey,
 		}
 	}
@@ -70,6 +72,8 @@ func New(borderColor lipgloss.AdaptiveColor, borderless bool) Bubble {
 			zipItemKey,
 			unzipItemKey,
 			toggleHiddenKey,
+			homeShortcutKey,
+			copyToClipboardKey,
 			submitInputKey,
 		}
 	}
