@@ -9,7 +9,7 @@ const (
 )
 
 var (
-	listStyle = lipgloss.NewStyle().
+	bubbleStyle = lipgloss.NewStyle().
 			Padding(1).
 			BorderStyle(lipgloss.NormalBorder())
 	inputStyle             = lipgloss.NewStyle().PaddingBottom(1)

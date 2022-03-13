@@ -9,44 +9,46 @@ import (
 	"github.com/charmbracelet/lipgloss"
 )
 
-type appState int
+type sessionState int
 
 const (
-	createFileState appState = iota
+	idleState sessionState = iota
+	createFileState
 	createDirectoryState
 	deleteItemState
 )
 
 // Bubble represents the properties of a filetree.
 type Bubble struct {
-	state      appState
+	state      sessionState
 	list       list.Model
 	input      textinput.Model
 	showHidden bool
 }
 
-// item represents a list item.
-type item struct {
-	title    string
-	desc     string
-	fileName string
+// Item represents a list item.
+type Item struct {
+	ItemTitle string
+	Desc      string
+	FileName  string
 }
 
 // Title returns the title of the list item.
-func (i item) Title() string {
-	return i.title
+func (i Item) Title() string {
+	return i.ItemTitle
 }
 
 // Description returns the description of the list item.
-func (i item) Description() string { return i.desc }
+func (i Item) Description() string { return i.Desc }
 
 // FilterValue returns the current filter value.
-func (i item) FilterValue() string { return i.title }
+func (i Item) FilterValue() string { return i.ItemTitle }
 
 // New creates a new instance of a filetree.
 func New(borderColor lipgloss.AdaptiveColor, borderless bool) Bubble {
 	listModel := list.New([]list.Item{}, list.NewDefaultDelegate(), 0, 0)
 	listModel.Title = "Filetree"
+	listModel.DisableQuitKeybindings()
 	listModel.AdditionalShortHelpKeys = func() []key.Binding {
 		return []key.Binding{
 			openDirectoryKey,
@@ -59,6 +61,7 @@ func New(borderColor lipgloss.AdaptiveColor, borderless bool) Bubble {
 			toggleHiddenKey,
 			homeShortcutKey,
 			copyToClipboardKey,
+			escapeKey,
 			submitInputKey,
 		}
 	}
@@ -74,6 +77,7 @@ func New(borderColor lipgloss.AdaptiveColor, borderless bool) Bubble {
 			toggleHiddenKey,
 			homeShortcutKey,
 			copyToClipboardKey,
+			escapeKey,
 			submitInputKey,
 		}
 	}
@@ -85,14 +89,15 @@ func New(borderColor lipgloss.AdaptiveColor, borderless bool) Bubble {
 	input.Width = 50
 
 	if borderless {
-		listStyle = listStyle.Copy().Border(lipgloss.HiddenBorder())
+		bubbleStyle = bubbleStyle.Copy().Border(lipgloss.HiddenBorder())
 	} else {
-		listStyle = listStyle.Copy().BorderForeground(borderColor)
+		bubbleStyle = bubbleStyle.Copy().BorderForeground(borderColor)
 	}
 
 	return Bubble{
 		list:       listModel,
 		input:      input,
 		showHidden: true,
+		state:      idleState,
 	}
 }

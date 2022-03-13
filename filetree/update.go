@@ -6,6 +6,7 @@ import (
 	"strings"
 
 	"github.com/charmbracelet/bubbles/key"
+	"github.com/charmbracelet/bubbles/textinput"
 	tea "github.com/charmbracelet/bubbletea"
 	"github.com/charmbracelet/lipgloss"
 	"github.com/knipferrc/teacup/dirfs"
@@ -13,25 +14,25 @@ import (
 
 // SetSize sets the size of the filetree.
 func (b *Bubble) SetSize(width, height int) {
-	v, h := listStyle.GetFrameSize()
+	horizontal, vertical := bubbleStyle.GetFrameSize()
 
-	b.list.Styles.StatusBar.Width(width - h)
-	b.list.SetSize(width-h, height-v-lipgloss.Height(b.input.View())-inputStyle.GetVerticalPadding())
+	b.list.Styles.StatusBar.Width(width - horizontal)
+	b.list.SetSize(width-horizontal, height-vertical-lipgloss.Height(b.input.View())-inputStyle.GetVerticalPadding())
 }
 
 // SetBorderColor sets the color of the border.
 func (b *Bubble) SetBorderColor(color lipgloss.AdaptiveColor) {
-	listStyle = listStyle.Copy().BorderForeground(color)
+	bubbleStyle = bubbleStyle.Copy().BorderForeground(color)
 }
 
 // GetSelectedItem returns the currently selected item in the tree.
-func (b Bubble) GetSelectedItem() item {
-	selectedDir, ok := b.list.SelectedItem().(item)
+func (b Bubble) GetSelectedItem() Item {
+	selectedDir, ok := b.list.SelectedItem().(Item)
 	if ok {
 		return selectedDir
 	}
 
-	return item{}
+	return Item{}
 }
 
 // Update handles updating the filetree.
@@ -41,8 +42,10 @@ func (b Bubble) Update(msg tea.Msg) (Bubble, tea.Cmd) {
 
 	switch msg := msg.(type) {
 	case getDirectoryListingMsg:
-		cmd = b.list.SetItems(msg)
-		cmds = append(cmds, cmd)
+		if msg != nil {
+			cmd = b.list.SetItems(msg)
+			cmds = append(cmds, cmd)
+		}
 	case copyToClipboardMsg:
 		return b, b.list.NewStatusMessage(statusMessageInfoStyle(string(msg)))
 	case errorMsg:
@@ -52,7 +55,7 @@ func (b Bubble) Update(msg tea.Msg) (Bubble, tea.Cmd) {
 		case key.Matches(msg, openDirectoryKey):
 			if !b.input.Focused() {
 				selectedDir := b.GetSelectedItem()
-				cmds = append(cmds, getDirectoryListingCmd(selectedDir.fileName, b.showHidden))
+				cmds = append(cmds, getDirectoryListingCmd(selectedDir.FileName, b.showHidden))
 			}
 		case key.Matches(msg, copyItemKey):
 			if !b.input.Focused() {
@@ -62,7 +65,7 @@ func (b Bubble) Update(msg tea.Msg) (Bubble, tea.Cmd) {
 				)
 
 				cmds = append(cmds, tea.Sequentially(
-					copyItemCmd(selectedItem.fileName),
+					copyItemCmd(selectedItem.FileName),
 					getDirectoryListingCmd(dirfs.CurrentDirectory, b.showHidden),
 				))
 				cmds = append(cmds, statusCmd)
@@ -75,7 +78,7 @@ func (b Bubble) Update(msg tea.Msg) (Bubble, tea.Cmd) {
 				)
 
 				cmds = append(cmds, tea.Sequentially(
-					zipItemCmd(selectedItem.fileName),
+					zipItemCmd(selectedItem.FileName),
 					getDirectoryListingCmd(dirfs.CurrentDirectory, b.showHidden),
 				))
 				cmds = append(cmds, statusCmd)
@@ -88,7 +91,7 @@ func (b Bubble) Update(msg tea.Msg) (Bubble, tea.Cmd) {
 				)
 
 				cmds = append(cmds, tea.Sequentially(
-					unzipItemCmd(selectedItem.fileName),
+					unzipItemCmd(selectedItem.FileName),
 					getDirectoryListingCmd(dirfs.CurrentDirectory, b.showHidden),
 				))
 				cmds = append(cmds, statusCmd)
@@ -99,7 +102,7 @@ func (b Bubble) Update(msg tea.Msg) (Bubble, tea.Cmd) {
 				b.input.Placeholder = "Enter name of new file"
 				b.state = createFileState
 
-				return b, nil
+				return b, textinput.Blink
 			}
 		case key.Matches(msg, createDirectoryKey):
 			if !b.input.Focused() {
@@ -107,7 +110,7 @@ func (b Bubble) Update(msg tea.Msg) (Bubble, tea.Cmd) {
 				b.input.Placeholder = "Enter name of new directory"
 				b.state = createDirectoryState
 
-				return b, nil
+				return b, textinput.Blink
 			}
 		case key.Matches(msg, deleteItemKey):
 			if !b.input.Focused() {
@@ -115,7 +118,7 @@ func (b Bubble) Update(msg tea.Msg) (Bubble, tea.Cmd) {
 				b.input.Placeholder = "Are you sure you want to delete (y/n)?"
 				b.state = deleteItemState
 
-				return b, nil
+				return b, textinput.Blink
 			}
 		case key.Matches(msg, toggleHiddenKey):
 			if !b.input.Focused() {
@@ -129,10 +132,18 @@ func (b Bubble) Update(msg tea.Msg) (Bubble, tea.Cmd) {
 		case key.Matches(msg, copyToClipboardKey):
 			if !b.input.Focused() {
 				selectedItem := b.GetSelectedItem()
-				cmds = append(cmds, copyToClipboardCmd(selectedItem.fileName))
+				cmds = append(cmds, copyToClipboardCmd(selectedItem.FileName))
+			}
+		case key.Matches(msg, escapeKey):
+			if b.input.Focused() {
+				b.input.Reset()
+				b.input.Blur()
+				b.state = idleState
 			}
 		case key.Matches(msg, submitInputKey):
 			switch b.state {
+			case idleState:
+				return b, nil
 			case createFileState:
 				statusCmd := b.list.NewStatusMessage(
 					statusMessageInfoStyle("Successfully created file"),
@@ -169,7 +180,7 @@ func (b Bubble) Update(msg tea.Msg) (Bubble, tea.Cmd) {
 
 					cmds = append(cmds, statusCmd)
 					cmds = append(cmds, tea.Sequentially(
-						deleteItemCmd(selectedDir.fileName),
+						deleteItemCmd(selectedDir.FileName),
 						getDirectoryListingCmd(dirfs.CurrentDirectory, b.showHidden),
 					))
 				}
@@ -180,11 +191,14 @@ func (b Bubble) Update(msg tea.Msg) (Bubble, tea.Cmd) {
 		}
 	}
 
-	b.list, cmd = b.list.Update(msg)
-	cmds = append(cmds, cmd)
-
-	b.input, cmd = b.input.Update(msg)
-	cmds = append(cmds, cmd)
+	switch b.state {
+	case idleState:
+		b.list, cmd = b.list.Update(msg)
+		cmds = append(cmds, cmd)
+	case createFileState, createDirectoryState, deleteItemState:
+		b.input, cmd = b.input.Update(msg)
+		cmds = append(cmds, cmd)
+	}
 
 	return b, tea.Batch(cmds...)
 }
