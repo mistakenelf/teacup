@@ -33,6 +33,15 @@ func getDirectoryListingCmd(name string, showHidden bool) tea.Cmd {
 			}
 		}
 
+		directoryInfo, err := os.Stat(directoryName)
+		if err != nil {
+			return errorMsg(err)
+		}
+
+		if !directoryInfo.IsDir() {
+			return nil
+		}
+
 		files, err := dirfs.GetDirectoryListing(directoryName, showHidden)
 		if err != nil {
 			return errorMsg(err)
@@ -50,10 +59,10 @@ func getDirectoryListingCmd(name string, showHidden bool) tea.Cmd {
 			return errorMsg(err)
 		}
 
-		items = append(items, item{
-			title:    dirfs.PreviousDirectory,
-			desc:     "",
-			fileName: filepath.Join(workingDirectory, dirfs.PreviousDirectory),
+		items = append(items, Item{
+			ItemTitle: dirfs.PreviousDirectory,
+			Desc:      "",
+			FileName:  filepath.Join(workingDirectory, dirfs.PreviousDirectory),
 		})
 
 		for _, file := range files {
@@ -63,20 +72,17 @@ func getDirectoryListingCmd(name string, showHidden bool) tea.Cmd {
 			}
 
 			icon, color := icons.GetIcon(fileInfo.Name(), filepath.Ext(fileInfo.Name()), icons.GetIndicator(fileInfo.Mode()))
-			fileIcon := lipgloss.NewStyle().Width(fileIconWidth).Render(fmt.Sprintf("%s%s ", color, icon))
-			fileName := lipgloss.NewStyle().
-				Foreground(lipgloss.AdaptiveColor{Light: "#000000", Dark: "#ffffff"}).
-				Render(file.Name())
+			fileIcon := lipgloss.NewStyle().Width(fileIconWidth).Render(fmt.Sprintf("%s%s\033[0m ", color, icon))
 
 			status := fmt.Sprintf("%s %s %s",
 				fileInfo.ModTime().Format("2006-01-02 15:04:05"),
 				fileInfo.Mode().String(),
 				formatter.ConvertBytesToSizeString(fileInfo.Size()))
 
-			items = append(items, item{
-				title:    lipgloss.JoinHorizontal(lipgloss.Top, fileIcon, fileName),
-				desc:     status,
-				fileName: filepath.Join(workingDirectory, file.Name()),
+			items = append(items, Item{
+				ItemTitle: lipgloss.JoinHorizontal(lipgloss.Top, fileIcon, file.Name()),
+				Desc:      status,
+				FileName:  filepath.Join(workingDirectory, file.Name()),
 			})
 		}
 
