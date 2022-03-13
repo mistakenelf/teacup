@@ -39,7 +39,7 @@ func (b Bubble) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 		b.filetree.SetSize(msg.Width, msg.Height)
 	case tea.KeyMsg:
 		switch msg.String() {
-		case "ctrl+c", "esc", "q":
+		case "ctrl+c":
 			cmds = append(cmds, tea.Quit)
 		}
 	}
