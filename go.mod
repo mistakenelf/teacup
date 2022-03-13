@@ -4,6 +4,7 @@ go 1.17
 
 require (
 	github.com/alecthomas/chroma v0.10.0
+	github.com/atotto/clipboard v0.1.4
 	github.com/charmbracelet/bubbles v0.10.3
 	github.com/charmbracelet/bubbletea v0.20.0
 	github.com/charmbracelet/glamour v0.5.0
@@ -14,7 +15,6 @@ require (
 )
 
 require (
-	github.com/atotto/clipboard v0.1.4 // indirect
 	github.com/aymerick/douceur v0.2.0 // indirect
 	github.com/containerd/console v1.0.3 // indirect
 	github.com/dlclark/regexp2 v1.4.0 // indirect
@@ -28,7 +28,7 @@ require (
 	github.com/olekukonko/tablewriter v0.0.5 // indirect
 	github.com/rivo/uniseg v0.2.0 // indirect
 	github.com/sahilm/fuzzy v0.1.0 // indirect
-	github.com/yuin/goldmark v1.4.8 // indirect
+	github.com/yuin/goldmark v1.4.10 // indirect
 	github.com/yuin/goldmark-emoji v1.0.1 // indirect
 	golang.org/x/image v0.0.0-20220302094943-723b81ca9867 // indirect
 	golang.org/x/net v0.0.0-20220225172249-27dd8689420f // indirect
