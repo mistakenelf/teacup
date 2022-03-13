@@ -16,4 +16,5 @@ var (
 	toggleHiddenKey    = key.NewBinding(key.WithKeys("."), key.WithHelp(".", "toggle hidden files"))
 	homeShortcutKey    = key.NewBinding(key.WithKeys("~"), key.WithHelp("~", "go to home directory"))
 	copyToClipboardKey = key.NewBinding(key.WithKeys("y"), key.WithHelp("y", "copy path to clipboard"))
+	escapeKey          = key.NewBinding(key.WithKeys("esc"), key.WithHelp("esc", "reset to initial state"))
 )
