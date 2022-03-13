@@ -63,6 +63,7 @@ func getDirectoryListingCmd(name string, showHidden bool) tea.Cmd {
 			ItemTitle: dirfs.PreviousDirectory,
 			Desc:      "",
 			FileName:  filepath.Join(workingDirectory, dirfs.PreviousDirectory),
+			Extension: "",
 		})
 
 		for _, file := range files {
@@ -83,6 +84,7 @@ func getDirectoryListingCmd(name string, showHidden bool) tea.Cmd {
 				ItemTitle: lipgloss.JoinHorizontal(lipgloss.Top, fileIcon, file.Name()),
 				Desc:      status,
 				FileName:  filepath.Join(workingDirectory, file.Name()),
+				Extension: filepath.Ext(fileInfo.Name()),
 			})
 		}
 
@@ -186,6 +188,9 @@ func copyToClipboardCmd(name string) tea.Cmd {
 			return errorMsg(err)
 		}
 
-		return copyToClipboardMsg(fmt.Sprintf("%s %s %s", "Successfully copied", name, "to clipboard"))
+		return copyToClipboardMsg(fmt.Sprintf(
+			"%s %s %s",
+			"Successfully copied", name, "to clipboard",
+		))
 	}
 }

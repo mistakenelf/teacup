@@ -31,6 +31,7 @@ type Item struct {
 	ItemTitle string
 	Desc      string
 	FileName  string
+	Extension string
 }
 
 // Title returns the title of the list item.
