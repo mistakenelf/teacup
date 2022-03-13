@@ -123,11 +123,6 @@ func (b Bubble) Update(msg tea.Msg) (Bubble, tea.Cmd) {
 		cmds []tea.Cmd
 	)
 
-	switch msg := msg.(type) {
-	case tea.WindowSizeMsg:
-		b.SetSize(msg.Width, msg.Height)
-	}
-
 	b.Viewport, cmd = b.Viewport.Update(msg)
 	cmds = append(cmds, cmd)
 
