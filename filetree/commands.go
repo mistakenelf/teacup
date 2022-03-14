@@ -194,3 +194,14 @@ func copyToClipboardCmd(name string) tea.Cmd {
 		))
 	}
 }
+
+// renameItemCmd renames a file or directory based on the name and value provided.
+func (b Bubble) renameItemCmd(name, value string) tea.Cmd {
+	return func() tea.Msg {
+		if err := dirfs.RenameDirectoryItem(name, value); err != nil {
+			return errorMsg(err)
+		}
+
+		return nil
+	}
+}
