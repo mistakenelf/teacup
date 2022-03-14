@@ -24,8 +24,9 @@ type copyToClipboardMsg string
 func getDirectoryListingCmd(name string, showHidden bool) tea.Cmd {
 	return func() tea.Msg {
 		var err error
-		directoryName := name
+		var items []list.Item
 
+		directoryName := name
 		if name == dirfs.HomeDirectory {
 			directoryName, err = dirfs.GetHomeDirectory()
 			if err != nil {
@@ -52,18 +53,17 @@ func getDirectoryListingCmd(name string, showHidden bool) tea.Cmd {
 			return errorMsg(err)
 		}
 
-		var items []list.Item
-
 		workingDirectory, err := dirfs.GetWorkingDirectory()
 		if err != nil {
 			return errorMsg(err)
 		}
 
-		items = append(items, Item{
-			ItemTitle: dirfs.PreviousDirectory,
-			Desc:      "",
-			FileName:  filepath.Join(workingDirectory, dirfs.PreviousDirectory),
-			Extension: "",
+		items = append(items, item{
+			title:       dirfs.PreviousDirectory,
+			desc:        "",
+			fileName:    filepath.Join(workingDirectory, dirfs.PreviousDirectory),
+			extension:   "",
+			isDirectory: directoryInfo.IsDir(),
 		})
 
 		for _, file := range files {
@@ -80,11 +80,12 @@ func getDirectoryListingCmd(name string, showHidden bool) tea.Cmd {
 				fileInfo.Mode().String(),
 				formatter.ConvertBytesToSizeString(fileInfo.Size()))
 
-			items = append(items, Item{
-				ItemTitle: lipgloss.JoinHorizontal(lipgloss.Top, fileIcon, file.Name()),
-				Desc:      status,
-				FileName:  filepath.Join(workingDirectory, file.Name()),
-				Extension: filepath.Ext(fileInfo.Name()),
+			items = append(items, item{
+				title:       lipgloss.JoinHorizontal(lipgloss.Top, fileIcon, file.Name()),
+				desc:        status,
+				fileName:    filepath.Join(workingDirectory, file.Name()),
+				extension:   filepath.Ext(fileInfo.Name()),
+				isDirectory: fileInfo.IsDir(),
 			})
 		}
 

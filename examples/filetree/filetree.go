@@ -15,7 +15,7 @@ type Bubble struct {
 
 // New creates a new instance of the UI.
 func New() Bubble {
-	f := filetree.New(lipgloss.AdaptiveColor{Light: "#000000", Dark: "#ffffff"}, false)
+	f := filetree.New(false, lipgloss.AdaptiveColor{Light: "#000000", Dark: "#ffffff"})
 
 	return Bubble{
 		filetree: f,

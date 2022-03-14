@@ -26,27 +26,8 @@ type Bubble struct {
 	showHidden bool
 }
 
-// Item represents a list item.
-type Item struct {
-	ItemTitle string
-	Desc      string
-	FileName  string
-	Extension string
-}
-
-// Title returns the title of the list item.
-func (i Item) Title() string {
-	return i.ItemTitle
-}
-
-// Description returns the description of the list item.
-func (i Item) Description() string { return i.Desc }
-
-// FilterValue returns the current filter value.
-func (i Item) FilterValue() string { return i.ItemTitle }
-
 // New creates a new instance of a filetree.
-func New(borderColor lipgloss.AdaptiveColor, borderless bool) Bubble {
+func New(borderless bool, borderColor lipgloss.AdaptiveColor) Bubble {
 	listModel := list.New([]list.Item{}, list.NewDefaultDelegate(), 0, 0)
 	listModel.Title = "Filetree"
 	listModel.DisableQuitKeybindings()

@@ -120,14 +120,27 @@ func (b *Bubble) SetBorderColor(color lipgloss.AdaptiveColor) {
 }
 
 // SetSize sets the size of the bubble.
-func (b *Bubble) SetSize(w, h int) {
+func (b *Bubble) SetSize(w, h int) tea.Cmd {
 	b.Viewport.Width = w - b.Viewport.Style.GetHorizontalFrameSize()
 	b.Viewport.Height = h - b.Viewport.Style.GetVerticalFrameSize()
 
-	b.Viewport.SetContent(lipgloss.NewStyle().
-		Width(b.Viewport.Width).
-		Height(b.Viewport.Height).
-		Render(b.ImageString))
+	border := lipgloss.NormalBorder()
+
+	if b.Borderless {
+		border = lipgloss.HiddenBorder()
+	}
+
+	b.Viewport.Style = lipgloss.NewStyle().
+		PaddingLeft(Padding).
+		PaddingRight(Padding).
+		Border(border).
+		BorderForeground(b.BorderColor)
+
+	if b.FileName != "" {
+		return convertImageToStringCmd(b.Viewport.Width, b.FileName)
+	}
+
+	return nil
 }
 
 // Update handles updating the UI of a code bubble.
@@ -139,7 +152,6 @@ func (b Bubble) Update(msg tea.Msg) (Bubble, tea.Cmd) {
 
 	switch msg := msg.(type) {
 	case convertImageToStringMsg:
-		b.FileName = ""
 		b.ImageString = lipgloss.NewStyle().
 			Width(b.Viewport.Width).
 			Height(b.Viewport.Height).

@@ -31,7 +31,7 @@ func (b Bubble) Update(msg tea.Msg) (Bubble, tea.Cmd) {
 		case key.Matches(msg, openDirectoryKey):
 			if !b.input.Focused() {
 				selectedDir := b.GetSelectedItem()
-				cmds = append(cmds, getDirectoryListingCmd(selectedDir.FileName, b.showHidden))
+				cmds = append(cmds, getDirectoryListingCmd(selectedDir.fileName, b.showHidden))
 			}
 		case key.Matches(msg, copyItemKey):
 			if !b.input.Focused() {
@@ -41,7 +41,7 @@ func (b Bubble) Update(msg tea.Msg) (Bubble, tea.Cmd) {
 				)
 
 				cmds = append(cmds, tea.Sequentially(
-					copyItemCmd(selectedItem.FileName),
+					copyItemCmd(selectedItem.fileName),
 					getDirectoryListingCmd(dirfs.CurrentDirectory, b.showHidden),
 				))
 				cmds = append(cmds, statusCmd)
@@ -54,7 +54,7 @@ func (b Bubble) Update(msg tea.Msg) (Bubble, tea.Cmd) {
 				)
 
 				cmds = append(cmds, tea.Sequentially(
-					zipItemCmd(selectedItem.FileName),
+					zipItemCmd(selectedItem.fileName),
 					getDirectoryListingCmd(dirfs.CurrentDirectory, b.showHidden),
 				))
 				cmds = append(cmds, statusCmd)
@@ -67,7 +67,7 @@ func (b Bubble) Update(msg tea.Msg) (Bubble, tea.Cmd) {
 				)
 
 				cmds = append(cmds, tea.Sequentially(
-					unzipItemCmd(selectedItem.FileName),
+					unzipItemCmd(selectedItem.fileName),
 					getDirectoryListingCmd(dirfs.CurrentDirectory, b.showHidden),
 				))
 				cmds = append(cmds, statusCmd)
@@ -108,7 +108,7 @@ func (b Bubble) Update(msg tea.Msg) (Bubble, tea.Cmd) {
 		case key.Matches(msg, copyToClipboardKey):
 			if !b.input.Focused() {
 				selectedItem := b.GetSelectedItem()
-				cmds = append(cmds, copyToClipboardCmd(selectedItem.FileName))
+				cmds = append(cmds, copyToClipboardCmd(selectedItem.fileName))
 			}
 		case key.Matches(msg, escapeKey):
 			if b.input.Focused() {
@@ -156,7 +156,7 @@ func (b Bubble) Update(msg tea.Msg) (Bubble, tea.Cmd) {
 
 					cmds = append(cmds, statusCmd)
 					cmds = append(cmds, tea.Sequentially(
-						deleteItemCmd(selectedDir.FileName),
+						deleteItemCmd(selectedDir.fileName),
 						getDirectoryListingCmd(dirfs.CurrentDirectory, b.showHidden),
 					))
 				}
