@@ -18,11 +18,11 @@ func (b *Bubble) SetBorderColor(color lipgloss.AdaptiveColor) {
 }
 
 // GetSelectedItem returns the currently selected item in the tree.
-func (b Bubble) GetSelectedItem() Item {
-	selectedDir, ok := b.list.SelectedItem().(Item)
+func (b Bubble) GetSelectedItem() item {
+	selectedDir, ok := b.list.SelectedItem().(item)
 	if ok {
 		return selectedDir
 	}
 
-	return Item{}
+	return item{}
 }
