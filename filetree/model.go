@@ -16,6 +16,7 @@ const (
 	createFileState
 	createDirectoryState
 	deleteItemState
+	renameItemState
 )
 
 // Bubble represents the properties of a filetree.
@@ -44,6 +45,7 @@ func New(borderless bool, borderColor lipgloss.AdaptiveColor) Bubble {
 			homeShortcutKey,
 			copyToClipboardKey,
 			escapeKey,
+			renameItemKey,
 			submitInputKey,
 		}
 	}
@@ -60,6 +62,7 @@ func New(borderless bool, borderColor lipgloss.AdaptiveColor) Bubble {
 			homeShortcutKey,
 			copyToClipboardKey,
 			escapeKey,
+			renameItemKey,
 			submitInputKey,
 		}
 	}

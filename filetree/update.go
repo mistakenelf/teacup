@@ -96,6 +96,14 @@ func (b Bubble) Update(msg tea.Msg) (Bubble, tea.Cmd) {
 
 				return b, textinput.Blink
 			}
+		case key.Matches(msg, renameItemKey):
+			if !b.input.Focused() {
+				b.input.Focus()
+				b.input.Placeholder = "Enter new name"
+				b.state = renameItemState
+
+				return b, textinput.Blink
+			}
 		case key.Matches(msg, toggleHiddenKey):
 			if !b.input.Focused() {
 				b.showHidden = !b.showHidden
@@ -131,6 +139,7 @@ func (b Bubble) Update(msg tea.Msg) (Bubble, tea.Cmd) {
 				))
 				cmds = append(cmds, statusCmd)
 
+				b.state = idleState
 				b.input.Blur()
 				b.input.Reset()
 			case createDirectoryState:
@@ -144,6 +153,7 @@ func (b Bubble) Update(msg tea.Msg) (Bubble, tea.Cmd) {
 					getDirectoryListingCmd(dirfs.CurrentDirectory, b.showHidden),
 				))
 
+				b.state = idleState
 				b.input.Blur()
 				b.input.Reset()
 			case deleteItemState:
@@ -161,6 +171,20 @@ func (b Bubble) Update(msg tea.Msg) (Bubble, tea.Cmd) {
 					))
 				}
 
+				b.state = idleState
+				b.input.Blur()
+				b.input.Reset()
+			case renameItemState:
+				statusCmd := b.list.NewStatusMessage(statusMessageInfoStyle("Successfully renamed"))
+				cmds = append(cmds, statusCmd)
+
+				selectedItem := b.GetSelectedItem()
+				cmds = append(cmds, tea.Sequentially(
+					renameItemCmd(selectedItem.fileName, b.input.Value()),
+					getDirectoryListingCmd(dirfs.CurrentDirectory, b.showHidden),
+				))
+
+				b.state = idleState
 				b.input.Blur()
 				b.input.Reset()
 			}
@@ -171,7 +195,7 @@ func (b Bubble) Update(msg tea.Msg) (Bubble, tea.Cmd) {
 	case idleState:
 		b.list, cmd = b.list.Update(msg)
 		cmds = append(cmds, cmd)
-	case createFileState, createDirectoryState, deleteItemState:
+	case createFileState, createDirectoryState, deleteItemState, renameItemState:
 		b.input, cmd = b.input.Update(msg)
 		cmds = append(cmds, cmd)
 	}

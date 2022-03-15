@@ -11,7 +11,7 @@ func (b Bubble) View() string {
 	switch b.state {
 	case idleState:
 		inputView = ""
-	case createFileState, createDirectoryState, deleteItemState:
+	case createFileState, createDirectoryState, deleteItemState, renameItemState:
 		inputView = b.input.View()
 	default:
 		inputView = ""
