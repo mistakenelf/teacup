@@ -25,6 +25,8 @@ type Bubble struct {
 	list       list.Model
 	input      textinput.Model
 	showHidden bool
+	width      int
+	height     int
 }
 
 // New creates a new instance of a filetree.
@@ -46,6 +48,7 @@ func New(borderless bool, borderColor lipgloss.AdaptiveColor) Bubble {
 			copyToClipboardKey,
 			escapeKey,
 			renameItemKey,
+			openInEditorKey,
 			submitInputKey,
 		}
 	}
@@ -63,6 +66,7 @@ func New(borderless bool, borderColor lipgloss.AdaptiveColor) Bubble {
 			copyToClipboardKey,
 			escapeKey,
 			renameItemKey,
+			openInEditorKey,
 			submitInputKey,
 		}
 	}

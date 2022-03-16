@@ -3,12 +3,16 @@
 package filetree
 
 import (
+	"errors"
+	"os"
+	"os/exec"
 	"strings"
 
 	"github.com/charmbracelet/bubbles/key"
 	"github.com/charmbracelet/bubbles/textinput"
 	tea "github.com/charmbracelet/bubbletea"
 	"github.com/knipferrc/teacup/dirfs"
+	"github.com/muesli/termenv"
 )
 
 // Update handles updating the filetree.
@@ -17,6 +21,9 @@ func (b Bubble) Update(msg tea.Msg) (Bubble, tea.Cmd) {
 	var cmds []tea.Cmd
 
 	switch msg := msg.(type) {
+	case tea.WindowSizeMsg:
+		b.width = msg.Width
+		b.height = msg.Height
 	case getDirectoryListingMsg:
 		if msg != nil {
 			cmd = b.list.SetItems(msg)
@@ -40,11 +47,10 @@ func (b Bubble) Update(msg tea.Msg) (Bubble, tea.Cmd) {
 					statusMessageInfoStyle("Successfully copied file"),
 				)
 
-				cmds = append(cmds, tea.Sequentially(
+				cmds = append(cmds, statusCmd, tea.Sequentially(
 					copyItemCmd(selectedItem.fileName),
 					getDirectoryListingCmd(dirfs.CurrentDirectory, b.showHidden),
 				))
-				cmds = append(cmds, statusCmd)
 			}
 		case key.Matches(msg, zipItemKey):
 			if !b.input.Focused() {
@@ -53,11 +59,10 @@ func (b Bubble) Update(msg tea.Msg) (Bubble, tea.Cmd) {
 					statusMessageInfoStyle("Successfully zipped item"),
 				)
 
-				cmds = append(cmds, tea.Sequentially(
+				cmds = append(cmds, statusCmd, tea.Sequentially(
 					zipItemCmd(selectedItem.fileName),
 					getDirectoryListingCmd(dirfs.CurrentDirectory, b.showHidden),
 				))
-				cmds = append(cmds, statusCmd)
 			}
 		case key.Matches(msg, unzipItemKey):
 			if !b.input.Focused() {
@@ -66,11 +71,10 @@ func (b Bubble) Update(msg tea.Msg) (Bubble, tea.Cmd) {
 					statusMessageInfoStyle("Successfully unzipped item"),
 				)
 
-				cmds = append(cmds, tea.Sequentially(
+				cmds = append(cmds, statusCmd, tea.Sequentially(
 					unzipItemCmd(selectedItem.fileName),
 					getDirectoryListingCmd(dirfs.CurrentDirectory, b.showHidden),
 				))
-				cmds = append(cmds, statusCmd)
 			}
 		case key.Matches(msg, createFileKey):
 			if !b.input.Focused() {
@@ -124,7 +128,32 @@ func (b Bubble) Update(msg tea.Msg) (Bubble, tea.Cmd) {
 				b.input.Blur()
 				b.state = idleState
 			}
+		case key.Matches(msg, openInEditorKey):
+			if !b.input.Focused() {
+				selectedItem := b.GetSelectedItem()
+
+				editorPath := os.Getenv("EDITOR")
+				if editorPath == "" {
+					return b, handleErrorCmd(errors.New("$EDITOR not set"))
+				}
+
+				editorCmd := exec.Command(editorPath, selectedItem.FileName())
+				editorCmd.Stdin = os.Stdin
+				editorCmd.Stdout = os.Stdout
+				editorCmd.Stderr = os.Stderr
+
+				err := editorCmd.Run()
+				termenv.AltScreen()
+
+				if err != nil {
+					return b, handleErrorCmd(err)
+				}
+
+				return b, tea.Batch(b.redrawCmd(), tea.HideCursor)
+			}
 		case key.Matches(msg, submitInputKey):
+			selectedItem := b.GetSelectedItem()
+
 			switch b.state {
 			case idleState:
 				return b, nil
@@ -133,61 +162,44 @@ func (b Bubble) Update(msg tea.Msg) (Bubble, tea.Cmd) {
 					statusMessageInfoStyle("Successfully created file"),
 				)
 
-				cmds = append(cmds, tea.Sequentially(
+				cmds = append(cmds, statusCmd, tea.Sequentially(
 					createFileCmd(b.input.Value()),
 					getDirectoryListingCmd(dirfs.CurrentDirectory, b.showHidden),
 				))
-				cmds = append(cmds, statusCmd)
-
-				b.state = idleState
-				b.input.Blur()
-				b.input.Reset()
 			case createDirectoryState:
 				statusCmd := b.list.NewStatusMessage(
 					statusMessageInfoStyle("Successfully created directory"),
 				)
 
-				cmds = append(cmds, statusCmd)
-				cmds = append(cmds, tea.Sequentially(
+				cmds = append(cmds, statusCmd, tea.Sequentially(
 					createDirectoryCmd(b.input.Value()),
 					getDirectoryListingCmd(dirfs.CurrentDirectory, b.showHidden),
 				))
-
-				b.state = idleState
-				b.input.Blur()
-				b.input.Reset()
 			case deleteItemState:
 				if strings.ToLower(b.input.Value()) == "y" {
-					selectedDir := b.GetSelectedItem()
-
 					statusCmd := b.list.NewStatusMessage(
 						statusMessageInfoStyle("Successfully deleted item"),
 					)
 
-					cmds = append(cmds, statusCmd)
-					cmds = append(cmds, tea.Sequentially(
-						deleteItemCmd(selectedDir.fileName),
+					cmds = append(cmds, statusCmd, tea.Sequentially(
+						deleteItemCmd(selectedItem.fileName),
 						getDirectoryListingCmd(dirfs.CurrentDirectory, b.showHidden),
 					))
 				}
-
-				b.state = idleState
-				b.input.Blur()
-				b.input.Reset()
 			case renameItemState:
-				statusCmd := b.list.NewStatusMessage(statusMessageInfoStyle("Successfully renamed"))
-				cmds = append(cmds, statusCmd)
+				statusCmd := b.list.NewStatusMessage(
+					statusMessageInfoStyle("Successfully renamed"),
+				)
 
-				selectedItem := b.GetSelectedItem()
-				cmds = append(cmds, tea.Sequentially(
+				cmds = append(cmds, statusCmd, tea.Sequentially(
 					renameItemCmd(selectedItem.fileName, b.input.Value()),
 					getDirectoryListingCmd(dirfs.CurrentDirectory, b.showHidden),
 				))
-
-				b.state = idleState
-				b.input.Blur()
-				b.input.Reset()
 			}
+
+			b.state = idleState
+			b.input.Blur()
+			b.input.Reset()
 		}
 	}
 
