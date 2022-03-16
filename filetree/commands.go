@@ -206,3 +206,20 @@ func renameItemCmd(name, value string) tea.Cmd {
 		return nil
 	}
 }
+
+// handleErrorCmd returns an error message to the UI.
+func handleErrorCmd(err error) tea.Cmd {
+	return func() tea.Msg {
+		return errorMsg(err)
+	}
+}
+
+// redrawCmd redraws the UI.
+func (b Bubble) redrawCmd() tea.Cmd {
+	return func() tea.Msg {
+		return tea.WindowSizeMsg{
+			Width:  b.width,
+			Height: b.height,
+		}
+	}
+}

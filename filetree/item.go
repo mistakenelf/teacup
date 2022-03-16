@@ -16,11 +16,11 @@ func (i item) Title() string {
 	return i.title
 }
 
-// GetFileName returns the file name of the list item.
-func (i item) GetFileName() string { return i.fileName }
+// FileName returns the file name of the list item.
+func (i item) FileName() string { return i.fileName }
 
-// GetFileExtension returns the extension of the list item.
-func (i item) GetFileExtension() string { return i.extension }
+// FileExtension returns the extension of the list item.
+func (i item) FileExtension() string { return i.extension }
 
 // IsDirectory returns true if the list item is a directory.
 func (i item) IsDirectory() bool { return i.isDirectory }
