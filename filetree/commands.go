@@ -12,7 +12,6 @@ import (
 	tea "github.com/charmbracelet/bubbletea"
 	"github.com/charmbracelet/lipgloss"
 	"github.com/knipferrc/teacup/dirfs"
-	"github.com/knipferrc/teacup/formatter"
 	"github.com/knipferrc/teacup/icons"
 )
 
@@ -78,7 +77,7 @@ func getDirectoryListingCmd(name string, showHidden bool) tea.Cmd {
 			status := fmt.Sprintf("%s %s %s",
 				fileInfo.ModTime().Format("2006-01-02 15:04:05"),
 				fileInfo.Mode().String(),
-				formatter.ConvertBytesToSizeString(fileInfo.Size()))
+				ConvertBytesToSizeString(fileInfo.Size()))
 
 			items = append(items, item{
 				title:       lipgloss.JoinHorizontal(lipgloss.Top, fileIcon, file.Name()),
