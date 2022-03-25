@@ -10,6 +10,10 @@ example-help:
 example-code:
 	@go run ./examples/code/code.go
 
-.PHONY: example-image
-example-image:
-	@go run ./examples/image/image.go
+.PHONY: example-markdown
+example-markdown:
+	@go run ./examples/markdown/markdown.go
+
+.PHONY: example-pdf
+example-pdf:
+	@go run ./examples/pdf/pdf.go
