@@ -10,6 +10,7 @@ import (
 
 const statusBarHeight = 1
 
+// Bubble represents the properties of the statusbar.
 type Bubble struct {
 	Width        int
 	Height       int
@@ -19,19 +20,28 @@ type Bubble struct {
 	FourthColumn string
 }
 
-func (b *Bubble) SetSize(width, height int) {
+// SetSize sets the width of the statusbar.
+func (b *Bubble) SetSize(width) {
 	b.Width = width
-	b.Height = height
 }
 
-// Update handles UI interactions with the help bubble.
+// Update updates the size of the statusbar.
 func (b Bubble) Update(msg tea.Msg) (Bubble, tea.Cmd) {
 	switch msg := msg.(type) {
 	case tea.WindowSizeMsg:
-		b.SetSize(msg.Width, msg.Height)
+		b.SetSize(msg.Width)
 	}
 
 	return b, nil
+}
+
+
+// SetContent sets the content of the statusbar.
+func (b *Bubble) SetContent(firstColumn, secondColumn, thirdColumn, fourthColumn string) {
+  b.FirstColumn = firstColumn
+  b.SecondColumn = secondColumn
+  b.ThirdColumn = thirdColumn
+  b.FourthColumn = fourthColumn
 }
 
 func (b Bubble) View() string {
