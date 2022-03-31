@@ -140,7 +140,12 @@ func (b Bubble) Update(msg tea.Msg) (Bubble, tea.Cmd) {
 
 	switch msg := msg.(type) {
 	case renderMarkdownMsg:
-		b.Viewport.SetContent(string(msg))
+		content := lipgloss.NewStyle().
+			Width(b.Viewport.Width).
+			Height(b.Viewport.Height).
+			Render(string(msg))
+
+		b.Viewport.SetContent(content)
 
 		return b, nil
 	case errorMsg:
