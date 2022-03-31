@@ -28,7 +28,10 @@ go install github.com/knipferrc/teacup@latest
 ## Features
 
 - dirfs - A collection of helper functions for working with the filesystem
-- formatter - A collection of helper functions to convert things to strings (image, syntax highlighting, etc)
 - icons - A package to render file icons
-- help - A bubble to render help text, for example, a keymap
-- filetree - WIP filetree bubble
+- help - Render help text, for example, a keymap
+- filetree - Navigate and perform actions on files
+- image - Render an image as a string
+- markdown - Render formatted markdown
+- pdf - Render pdf as a string
+- code - Render syntax highlighted text
