@@ -16,6 +16,7 @@ type Bubble struct {
 // New creates a new instance of the UI.
 func New() Bubble {
 	markdownModel := markdown.New(false, lipgloss.AdaptiveColor{Light: "#000000", Dark: "#ffffff"})
+	markdownModel.FileName = "README.md"
 
 	return Bubble{
 		markdown: markdownModel,
@@ -36,8 +37,7 @@ func (b Bubble) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 
 	switch msg := msg.(type) {
 	case tea.WindowSizeMsg:
-		b.markdown.SetSize(msg.Width, msg.Height)
-		cmds = append(cmds, b.markdown.SetFileName("README.md"))
+		cmds = append(cmds, b.markdown.SetSize(msg.Width, msg.Height))
 
 		return b, tea.Batch(cmds...)
 	case tea.KeyMsg:
