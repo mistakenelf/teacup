@@ -17,3 +17,11 @@ example-markdown:
 .PHONY: example-pdf
 example-pdf:
 	@go run ./examples/pdf/pdf.go
+
+.PHONY: example-statusbar
+example-statusbar:
+	@go run ./examples/statusbar/statusbar.go
+
+.PHONY: example-iamge
+example-image:
+	@go run ./examples/image/image.go
