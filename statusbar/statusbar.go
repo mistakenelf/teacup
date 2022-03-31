@@ -8,7 +8,7 @@ import (
 	"github.com/muesli/reflow/truncate"
 )
 
-const statusBarHeight = 1
+const Height = 1
 
 // Bubble represents the properties of the statusbar.
 type Bubble struct {
@@ -21,7 +21,7 @@ type Bubble struct {
 }
 
 // SetSize sets the width of the statusbar.
-func (b *Bubble) SetSize(width) {
+func (b *Bubble) SetSize(width int) {
 	b.Width = width
 }
 
@@ -35,37 +35,44 @@ func (b Bubble) Update(msg tea.Msg) (Bubble, tea.Cmd) {
 	return b, nil
 }
 
-
 // SetContent sets the content of the statusbar.
 func (b *Bubble) SetContent(firstColumn, secondColumn, thirdColumn, fourthColumn string) {
-  b.FirstColumn = firstColumn
-  b.SecondColumn = secondColumn
-  b.ThirdColumn = thirdColumn
-  b.FourthColumn = fourthColumn
+	b.FirstColumn = firstColumn
+	b.SecondColumn = secondColumn
+	b.ThirdColumn = thirdColumn
+	b.FourthColumn = fourthColumn
 }
 
 func (b Bubble) View() string {
-  width := lipgloss.Width
+	width := lipgloss.Width
 
 	firstColumn := lipgloss.NewStyle().
+		Foreground(lipgloss.Color("#ffffff")).
+		Background(lipgloss.Color("#F25D94")).
 		Padding(0, 1).
-		Height(statusBarHeight).
+		Height(Height).
 		Render(truncate.StringWithTail(b.FirstColumn, 30, "..."))
 
 	thirdColumn := lipgloss.NewStyle().
+		Foreground(lipgloss.Color("#ffffff")).
+		Background(lipgloss.Color("#A550DF")).
 		Align(lipgloss.Right).
 		Padding(0, 1).
-		Height(statusBarHeight).
+		Height(Height).
 		Render(b.ThirdColumn)
 
 	fourthColumn := lipgloss.NewStyle().
+		Foreground(lipgloss.Color("#ffffff")).
+		Background(lipgloss.Color("#6124DF")).
 		Padding(0, 1).
-		Height(statusBarHeight).
+		Height(Height).
 		Render(b.FourthColumn)
 
 	secondColumn := lipgloss.NewStyle().
+		Foreground(lipgloss.Color("#ffffff")).
+		Background(lipgloss.Color("#3c3836")).
 		Padding(0, 1).
-		Height(statusBarHeight).
+		Height(Height).
 		Width(b.Width - width(firstColumn) - width(thirdColumn) - width(fourthColumn)).
 		Render(truncate.StringWithTail(
 			b.SecondColumn,
