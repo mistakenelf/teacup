@@ -10,9 +10,10 @@ const (
 
 var (
 	bubbleStyle = lipgloss.NewStyle().
-			Padding(1).
+			PaddingLeft(1).
+			PaddingRight(1).
 			BorderStyle(lipgloss.NormalBorder())
-	inputStyle             = lipgloss.NewStyle().PaddingBottom(1)
+	inputStyle             = lipgloss.NewStyle().PaddingTop(1)
 	statusMessageInfoStyle = lipgloss.NewStyle().
 				Foreground(lipgloss.AdaptiveColor{Light: "#04B575", Dark: "#04B575"}).
 				Render

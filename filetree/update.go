@@ -9,7 +9,6 @@ import (
 	"strings"
 
 	"github.com/charmbracelet/bubbles/key"
-	"github.com/charmbracelet/bubbles/list"
 	"github.com/charmbracelet/bubbles/textinput"
 	tea "github.com/charmbracelet/bubbletea"
 	"github.com/knipferrc/teacup/dirfs"
@@ -35,7 +34,7 @@ func (b Bubble) Update(msg tea.Msg) (Bubble, tea.Cmd) {
 	case errorMsg:
 		return b, b.list.NewStatusMessage(statusMessageErrorStyle(msg.Error()))
 	case tea.KeyMsg:
-		if b.list.FilterState() == list.Filtering {
+		if b.IsFiltering() {
 			break
 		}
 
@@ -208,13 +207,15 @@ func (b Bubble) Update(msg tea.Msg) (Bubble, tea.Cmd) {
 		}
 	}
 
-	switch b.state {
-	case idleState:
-		b.list, cmd = b.list.Update(msg)
-		cmds = append(cmds, cmd)
-	case createFileState, createDirectoryState, deleteItemState, renameItemState:
-		b.input, cmd = b.input.Update(msg)
-		cmds = append(cmds, cmd)
+	if b.active {
+		switch b.state {
+		case idleState:
+			b.list, cmd = b.list.Update(msg)
+			cmds = append(cmds, cmd)
+		case createFileState, createDirectoryState, deleteItemState, renameItemState:
+			b.input, cmd = b.input.Update(msg)
+			cmds = append(cmds, cmd)
+		}
 	}
 
 	return b, tea.Batch(cmds...)

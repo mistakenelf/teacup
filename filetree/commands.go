@@ -10,9 +10,7 @@ import (
 	"github.com/atotto/clipboard"
 	"github.com/charmbracelet/bubbles/list"
 	tea "github.com/charmbracelet/bubbletea"
-	"github.com/charmbracelet/lipgloss"
 	"github.com/knipferrc/teacup/dirfs"
-	"github.com/knipferrc/teacup/icons"
 )
 
 type getDirectoryListingMsg []list.Item
@@ -58,11 +56,14 @@ func getDirectoryListingCmd(name string, showHidden bool) tea.Cmd {
 		}
 
 		items = append(items, item{
-			title:       dirfs.PreviousDirectory,
-			desc:        "",
-			fileName:    filepath.Join(workingDirectory, dirfs.PreviousDirectory),
-			extension:   "",
-			isDirectory: directoryInfo.IsDir(),
+			title:            dirfs.PreviousDirectory,
+			desc:             "",
+			shortName:        dirfs.PreviousDirectory,
+			fileName:         filepath.Join(workingDirectory, dirfs.PreviousDirectory),
+			extension:        "",
+			isDirectory:      directoryInfo.IsDir(),
+			currentDirectory: workingDirectory,
+			fileInfo:         nil,
 		})
 
 		for _, file := range files {
@@ -71,20 +72,20 @@ func getDirectoryListingCmd(name string, showHidden bool) tea.Cmd {
 				continue
 			}
 
-			icon, color := icons.GetIcon(fileInfo.Name(), filepath.Ext(fileInfo.Name()), icons.GetIndicator(fileInfo.Mode()))
-			fileIcon := lipgloss.NewStyle().Width(fileIconWidth).Render(fmt.Sprintf("%s%s\033[0m ", color, icon))
-
 			status := fmt.Sprintf("%s %s %s",
 				fileInfo.ModTime().Format("2006-01-02 15:04:05"),
 				fileInfo.Mode().String(),
 				ConvertBytesToSizeString(fileInfo.Size()))
 
 			items = append(items, item{
-				title:       lipgloss.JoinHorizontal(lipgloss.Top, fileIcon, file.Name()),
-				desc:        status,
-				fileName:    filepath.Join(workingDirectory, file.Name()),
-				extension:   filepath.Ext(fileInfo.Name()),
-				isDirectory: fileInfo.IsDir(),
+				title:            file.Name(),
+				desc:             status,
+				shortName:        file.Name(),
+				fileName:         filepath.Join(workingDirectory, file.Name()),
+				extension:        filepath.Ext(fileInfo.Name()),
+				isDirectory:      fileInfo.IsDir(),
+				currentDirectory: workingDirectory,
+				fileInfo:         fileInfo,
 			})
 		}
 

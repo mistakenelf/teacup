@@ -5,6 +5,7 @@ package filetree
 import (
 	"fmt"
 
+	"github.com/charmbracelet/bubbles/list"
 	"github.com/charmbracelet/lipgloss"
 )
 
@@ -59,4 +60,24 @@ func (b Bubble) GetSelectedItem() item {
 	}
 
 	return item{}
+}
+
+// Cursor returns the current position of the cursor in the tree.
+func (b Bubble) Cursor() int {
+	return b.list.Index() + 1
+}
+
+// TotalItems returns the total number of items in the tree.
+func (b Bubble) TotalItems() int {
+	return len(b.list.Items())
+}
+
+// SetIsActive sets if the bubble is currently active.
+func (b *Bubble) SetIsActive(active bool) {
+	b.active = active
+}
+
+// IsFiltering returns if the tree is currently being filtered.
+func (b Bubble) IsFiltering() bool {
+	return b.list.FilterState() == list.Filtering
 }
