@@ -115,6 +115,11 @@ func (b *Bubble) SetSize(w, h int) {
 		Render(b.HighlightedContent))
 }
 
+// JumpToTop jumps to the top of the viewport.
+func (b Bubble) JumpToTop() {
+	b.Viewport.GotoTop()
+}
+
 // Update handles updating the UI of a code bubble.
 func (b Bubble) Update(msg tea.Msg) (Bubble, tea.Cmd) {
 	var (

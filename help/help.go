@@ -123,6 +123,11 @@ func (b *Bubble) SetIsActive(active bool) {
 	b.Active = active
 }
 
+// JumpToTop jumps to the top of the viewport.
+func (b Bubble) JumpToTop() {
+	b.Viewport.GotoTop()
+}
+
 // Update handles UI interactions with the help bubble.
 func (b Bubble) Update(msg tea.Msg) (Bubble, tea.Cmd) {
 	var (
