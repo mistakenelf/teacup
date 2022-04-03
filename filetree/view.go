@@ -11,8 +11,10 @@ func (b Bubble) View() string {
 	switch b.state {
 	case idleState:
 		inputView = ""
-	case createFileState, createDirectoryState, deleteItemState, renameItemState:
+	case createFileState, createDirectoryState, renameItemState:
 		inputView = b.input.View()
+	case deleteItemState:
+		inputView = "Are you sure you want to delete? (y/n)"
 	default:
 		inputView = ""
 	}

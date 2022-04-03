@@ -6,6 +6,7 @@ import "github.com/charmbracelet/lipgloss"
 
 const (
 	fileIconWidth = 2
+	yesKey        = "y"
 )
 
 var (
