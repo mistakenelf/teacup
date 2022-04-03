@@ -25,12 +25,13 @@ type Bubble struct {
 	list       list.Model
 	input      textinput.Model
 	showHidden bool
+	active     bool
 	width      int
 	height     int
 }
 
 // New creates a new instance of a filetree.
-func New(borderless bool, borderColor lipgloss.AdaptiveColor) Bubble {
+func New(active, borderless bool, borderColor lipgloss.AdaptiveColor) Bubble {
 	listModel := list.New([]list.Item{}, list.NewDefaultDelegate(), 0, 0)
 	listModel.Title = "Filetree"
 	listModel.DisableQuitKeybindings()
@@ -87,6 +88,7 @@ func New(borderless bool, borderColor lipgloss.AdaptiveColor) Bubble {
 		list:       listModel,
 		input:      input,
 		showHidden: true,
+		active:     active,
 		state:      idleState,
 	}
 }

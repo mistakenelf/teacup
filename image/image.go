@@ -74,13 +74,14 @@ func convertImageToStringCmd(width int, filename string) tea.Cmd {
 type Bubble struct {
 	Viewport    viewport.Model
 	BorderColor lipgloss.AdaptiveColor
+	Active      bool
 	Borderless  bool
 	FileName    string
 	ImageString string
 }
 
 // New creates a new instance of code.
-func New(borderless bool, borderColor lipgloss.AdaptiveColor) Bubble {
+func New(active, borderless bool, borderColor lipgloss.AdaptiveColor) Bubble {
 	viewPort := viewport.New(0, 0)
 	border := lipgloss.NormalBorder()
 
@@ -96,6 +97,7 @@ func New(borderless bool, borderColor lipgloss.AdaptiveColor) Bubble {
 
 	return Bubble{
 		Viewport:    viewPort,
+		Active:      active,
 		Borderless:  borderless,
 		BorderColor: borderColor,
 	}
@@ -143,6 +145,11 @@ func (b *Bubble) SetSize(w, h int) tea.Cmd {
 	return nil
 }
 
+// SetIsActive sets if the bubble is currently active
+func (b *Bubble) SetIsActive(active bool) {
+	b.Active = active
+}
+
 // Update handles updating the UI of a code bubble.
 func (b Bubble) Update(msg tea.Msg) (Bubble, tea.Cmd) {
 	var (
@@ -172,8 +179,10 @@ func (b Bubble) Update(msg tea.Msg) (Bubble, tea.Cmd) {
 		return b, nil
 	}
 
-	b.Viewport, cmd = b.Viewport.Update(msg)
-	cmds = append(cmds, cmd)
+	if b.Active {
+		b.Viewport, cmd = b.Viewport.Update(msg)
+		cmds = append(cmds, cmd)
+	}
 
 	return b, tea.Batch(cmds...)
 }

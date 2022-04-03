@@ -28,6 +28,7 @@ type Bubble struct {
 	Entries     []Entry
 	BorderColor lipgloss.AdaptiveColor
 	Title       string
+	Active      bool
 	Borderless  bool
 }
 
@@ -77,7 +78,7 @@ func New(
 	borderColor lipgloss.AdaptiveColor,
 	title string,
 	entries []Entry,
-	borderless bool,
+	active, borderless bool,
 ) Bubble {
 	viewPort := viewport.New(0, 0)
 	border := lipgloss.NormalBorder()
@@ -98,6 +99,7 @@ func New(
 		Viewport:    viewPort,
 		Entries:     entries,
 		Title:       title,
+		Active:      active,
 		Borderless:  borderless,
 		BorderColor: borderColor,
 	}
@@ -116,6 +118,11 @@ func (b *Bubble) SetBorderColor(color lipgloss.AdaptiveColor) {
 	b.BorderColor = color
 }
 
+// SetIsActive sets if the bubble is currently active
+func (b *Bubble) SetIsActive(active bool) {
+	b.Active = active
+}
+
 // Update handles UI interactions with the help bubble.
 func (b Bubble) Update(msg tea.Msg) (Bubble, tea.Cmd) {
 	var (
@@ -123,8 +130,10 @@ func (b Bubble) Update(msg tea.Msg) (Bubble, tea.Cmd) {
 		cmds []tea.Cmd
 	)
 
-	b.Viewport, cmd = b.Viewport.Update(msg)
-	cmds = append(cmds, cmd)
+	if b.Active {
+		b.Viewport, cmd = b.Viewport.Update(msg)
+		cmds = append(cmds, cmd)
+	}
 
 	return b, tea.Batch(cmds...)
 }

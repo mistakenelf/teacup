@@ -6,10 +6,8 @@ import (
 	"errors"
 	"os"
 	"os/exec"
-	"strings"
 
 	"github.com/charmbracelet/bubbles/key"
-	"github.com/charmbracelet/bubbles/list"
 	"github.com/charmbracelet/bubbles/textinput"
 	tea "github.com/charmbracelet/bubbletea"
 	"github.com/knipferrc/teacup/dirfs"
@@ -35,8 +33,31 @@ func (b Bubble) Update(msg tea.Msg) (Bubble, tea.Cmd) {
 	case errorMsg:
 		return b, b.list.NewStatusMessage(statusMessageErrorStyle(msg.Error()))
 	case tea.KeyMsg:
-		if b.list.FilterState() == list.Filtering {
+		if b.IsFiltering() {
 			break
+		}
+
+		switch b.state {
+		case deleteItemState:
+			if msg.String() == yesKey {
+				selectedItem := b.GetSelectedItem()
+
+				statusCmd := b.list.NewStatusMessage(
+					statusMessageInfoStyle("Successfully deleted item"),
+				)
+
+				cmds = append(cmds, statusCmd, tea.Sequentially(
+					deleteItemCmd(selectedItem.fileName),
+					getDirectoryListingCmd(dirfs.CurrentDirectory, b.showHidden),
+				))
+
+				b.state = idleState
+
+				return b, tea.Batch(cmds...)
+			} else {
+				b.state = idleState
+				return b, nil
+			}
 		}
 
 		switch {
@@ -99,11 +120,9 @@ func (b Bubble) Update(msg tea.Msg) (Bubble, tea.Cmd) {
 			}
 		case key.Matches(msg, deleteItemKey):
 			if !b.input.Focused() {
-				b.input.Focus()
-				b.input.Placeholder = "Are you sure you want to delete (y/n)?"
 				b.state = deleteItemState
 
-				return b, textinput.Blink
+				return b, nil
 			}
 		case key.Matches(msg, renameItemKey):
 			if !b.input.Focused() {
@@ -180,17 +199,6 @@ func (b Bubble) Update(msg tea.Msg) (Bubble, tea.Cmd) {
 					createDirectoryCmd(b.input.Value()),
 					getDirectoryListingCmd(dirfs.CurrentDirectory, b.showHidden),
 				))
-			case deleteItemState:
-				if strings.ToLower(b.input.Value()) == "y" {
-					statusCmd := b.list.NewStatusMessage(
-						statusMessageInfoStyle("Successfully deleted item"),
-					)
-
-					cmds = append(cmds, statusCmd, tea.Sequentially(
-						deleteItemCmd(selectedItem.fileName),
-						getDirectoryListingCmd(dirfs.CurrentDirectory, b.showHidden),
-					))
-				}
 			case renameItemState:
 				statusCmd := b.list.NewStatusMessage(
 					statusMessageInfoStyle("Successfully renamed"),
@@ -208,13 +216,15 @@ func (b Bubble) Update(msg tea.Msg) (Bubble, tea.Cmd) {
 		}
 	}
 
-	switch b.state {
-	case idleState:
-		b.list, cmd = b.list.Update(msg)
-		cmds = append(cmds, cmd)
-	case createFileState, createDirectoryState, deleteItemState, renameItemState:
-		b.input, cmd = b.input.Update(msg)
-		cmds = append(cmds, cmd)
+	if b.active {
+		switch b.state {
+		case idleState:
+			b.list, cmd = b.list.Update(msg)
+			cmds = append(cmds, cmd)
+		case createFileState, createDirectoryState, renameItemState:
+			b.input, cmd = b.input.Update(msg)
+			cmds = append(cmds, cmd)
+		}
 	}
 
 	return b, tea.Batch(cmds...)
