@@ -115,8 +115,8 @@ func (b *Bubble) SetSize(w, h int) {
 		Render(b.HighlightedContent))
 }
 
-// JumpToTop jumps to the top of the viewport.
-func (b Bubble) JumpToTop() {
+// GotoTop jumps to the top of the viewport.
+func (b *Bubble) GotoTop() {
 	b.Viewport.GotoTop()
 }
 

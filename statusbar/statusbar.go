@@ -8,6 +8,7 @@ import (
 	"github.com/muesli/reflow/truncate"
 )
 
+// Height represents the height of the statusbar.
 const Height = 1
 
 // Bubble represents the properties of the statusbar.

@@ -133,8 +133,8 @@ func (b *Bubble) SetSize(w, h int) tea.Cmd {
 	return nil
 }
 
-// JumpToTop jumps to the top of the viewport.
-func (b Bubble) JumpToTop() {
+// GotoTop jumps to the top of the viewport.
+func (b *Bubble) GotoTop() {
 	b.Viewport.GotoTop()
 }
 

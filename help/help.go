@@ -123,8 +123,8 @@ func (b *Bubble) SetIsActive(active bool) {
 	b.Active = active
 }
 
-// JumpToTop jumps to the top of the viewport.
-func (b Bubble) JumpToTop() {
+// GotoTop jumps to the top of the viewport.
+func (b *Bubble) GotoTop() {
 	b.Viewport.GotoTop()
 }
 
