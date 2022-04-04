@@ -123,7 +123,7 @@ func (b *Bubble) SetSize(w, h int) {
 		BorderForeground(b.BorderColor)
 }
 
-// SetIsActive sets if the bubble is currently active
+// SetIsActive sets if the bubble is currently active.
 func (b *Bubble) SetIsActive(active bool) {
 	b.Active = active
 }

@@ -43,6 +43,7 @@ func (b *Bubble) SetContent(firstColumn, secondColumn, thirdColumn, fourthColumn
 	b.FourthColumn = fourthColumn
 }
 
+// View returns a string representation of a statusbar.
 func (b Bubble) View() string {
 	width := lipgloss.Width
 
