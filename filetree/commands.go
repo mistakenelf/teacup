@@ -72,21 +72,49 @@ func getDirectoryListingCmd(name string, showHidden bool) tea.Cmd {
 				continue
 			}
 
-			status := fmt.Sprintf("%s %s %s",
-				fileInfo.ModTime().Format("2006-01-02 15:04:05"),
-				fileInfo.Mode().String(),
-				ConvertBytesToSizeString(fileInfo.Size()))
+			if fileInfo.Mode()&os.ModeSymlink == os.ModeSymlink {
+				symlinkFile, err := os.Readlink(fileInfo.Name())
+				if err != nil {
+					return errorMsg(err)
+				}
 
-			items = append(items, item{
-				title:            file.Name(),
-				desc:             status,
-				shortName:        file.Name(),
-				fileName:         filepath.Join(workingDirectory, file.Name()),
-				extension:        filepath.Ext(fileInfo.Name()),
-				isDirectory:      fileInfo.IsDir(),
-				currentDirectory: workingDirectory,
-				fileInfo:         fileInfo,
-			})
+				symlinkFileInfo, err := os.Stat(symlinkFile)
+				if err != nil {
+					return errorMsg(err)
+				}
+
+				status := fmt.Sprintf("%s %s %s",
+					symlinkFileInfo.ModTime().Format("2006-01-02 15:04:05"),
+					symlinkFileInfo.Mode().String(),
+					ConvertBytesToSizeString(symlinkFileInfo.Size()))
+
+				items = append(items, item{
+					title:            fileInfo.Name(),
+					desc:             status,
+					shortName:        fileInfo.Name(),
+					fileName:         filepath.Join(workingDirectory, symlinkFileInfo.Name()),
+					extension:        filepath.Ext(symlinkFileInfo.Name()),
+					isDirectory:      symlinkFileInfo.IsDir(),
+					currentDirectory: workingDirectory,
+					fileInfo:         fileInfo,
+				})
+			} else {
+				status := fmt.Sprintf("%s %s %s",
+					fileInfo.ModTime().Format("2006-01-02 15:04:05"),
+					fileInfo.Mode().String(),
+					ConvertBytesToSizeString(fileInfo.Size()))
+
+				items = append(items, item{
+					title:            file.Name(),
+					desc:             status,
+					shortName:        file.Name(),
+					fileName:         filepath.Join(workingDirectory, file.Name()),
+					extension:        filepath.Ext(fileInfo.Name()),
+					isDirectory:      fileInfo.IsDir(),
+					currentDirectory: workingDirectory,
+					fileInfo:         fileInfo,
+				})
+			}
 		}
 
 		return getDirectoryListingMsg(items)

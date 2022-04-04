@@ -224,6 +224,8 @@ func (b Bubble) Update(msg tea.Msg) (Bubble, tea.Cmd) {
 		case createFileState, createDirectoryState, renameItemState:
 			b.input, cmd = b.input.Update(msg)
 			cmds = append(cmds, cmd)
+		case deleteItemState:
+			return b, nil
 		}
 	}
 

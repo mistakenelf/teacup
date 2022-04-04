@@ -26,7 +26,11 @@ type item struct {
 // Title returns the title of the list item.
 func (i item) Title() string {
 	if i.fileInfo != nil {
-		icon, color := icons.GetIcon(i.fileInfo.Name(), filepath.Ext(i.fileInfo.Name()), icons.GetIndicator(i.fileInfo.Mode()))
+		icon, color := icons.GetIcon(
+			i.fileInfo.Name(),
+			filepath.Ext(i.fileInfo.Name()),
+			icons.GetIndicator(i.fileInfo.Mode()),
+		)
 		fileIcon := lipgloss.NewStyle().Width(fileIconWidth).Render(fmt.Sprintf("%s%s\033[0m ", color, icon))
 
 		return fileIcon + " " + i.title
