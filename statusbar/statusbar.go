@@ -11,14 +11,34 @@ import (
 // Height represents the height of the statusbar.
 const Height = 1
 
+// ColorConfig
+type ColorConfig struct {
+	Foreground lipgloss.AdaptiveColor
+	Background lipgloss.AdaptiveColor
+}
+
 // Bubble represents the properties of the statusbar.
 type Bubble struct {
-	Width        int
-	Height       int
-	FirstColumn  string
-	SecondColumn string
-	ThirdColumn  string
-	FourthColumn string
+	Width              int
+	Height             int
+	FirstColumn        string
+	SecondColumn       string
+	ThirdColumn        string
+	FourthColumn       string
+	FirstColumnColors  ColorConfig
+	SecondColumnColors ColorConfig
+	ThirdColumnColors  ColorConfig
+	FourthColumnColors ColorConfig
+}
+
+// New creates a new instance of the statusbar.
+func New(firstColumnColors, secondColumnColors, thirdColumnColors, fourthColumnColors ColorConfig) Bubble {
+	return Bubble{
+		FirstColumnColors:  firstColumnColors,
+		SecondColumnColors: secondColumnColors,
+		ThirdColumnColors:  thirdColumnColors,
+		FourthColumnColors: fourthColumnColors,
+	}
 }
 
 // SetSize sets the width of the statusbar.
@@ -44,35 +64,43 @@ func (b *Bubble) SetContent(firstColumn, secondColumn, thirdColumn, fourthColumn
 	b.FourthColumn = fourthColumn
 }
 
+// SetColors sets the colors of the 4 columns.
+func (b *Bubble) SetColors(firstColumnColors, secondColumnColors, thirdColumnColors, fourthColumnColors ColorConfig) {
+	b.FirstColumnColors = firstColumnColors
+	b.SecondColumnColors = secondColumnColors
+	b.ThirdColumnColors = thirdColumnColors
+	b.FourthColumnColors = fourthColumnColors
+}
+
 // View returns a string representation of a statusbar.
 func (b Bubble) View() string {
 	width := lipgloss.Width
 
 	firstColumn := lipgloss.NewStyle().
-		Foreground(lipgloss.Color("#ffffff")).
-		Background(lipgloss.Color("#F25D94")).
+		Foreground(b.FirstColumnColors.Foreground).
+		Background(b.FirstColumnColors.Background).
 		Padding(0, 1).
 		Height(Height).
 		Render(truncate.StringWithTail(b.FirstColumn, 30, "..."))
 
 	thirdColumn := lipgloss.NewStyle().
-		Foreground(lipgloss.Color("#ffffff")).
-		Background(lipgloss.Color("#A550DF")).
+		Foreground(b.ThirdColumnColors.Foreground).
+		Background(b.ThirdColumnColors.Background).
 		Align(lipgloss.Right).
 		Padding(0, 1).
 		Height(Height).
 		Render(b.ThirdColumn)
 
 	fourthColumn := lipgloss.NewStyle().
-		Foreground(lipgloss.Color("#ffffff")).
-		Background(lipgloss.Color("#6124DF")).
+		Foreground(b.FourthColumnColors.Foreground).
+		Background(b.FourthColumnColors.Background).
 		Padding(0, 1).
 		Height(Height).
 		Render(b.FourthColumn)
 
 	secondColumn := lipgloss.NewStyle().
-		Foreground(lipgloss.Color("#ffffff")).
-		Background(lipgloss.Color("#3c3836")).
+		Foreground(b.SecondColumnColors.Foreground).
+		Background(b.SecondColumnColors.Background).
 		Padding(0, 1).
 		Height(Height).
 		Width(b.Width - width(firstColumn) - width(thirdColumn) - width(fourthColumn)).
