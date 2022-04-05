@@ -33,7 +33,7 @@ func (i item) Title() string {
 		)
 		fileIcon := lipgloss.NewStyle().Width(fileIconWidth).Render(fmt.Sprintf("%s%s\033[0m ", color, icon))
 
-		return fileIcon + " " + i.title
+		return fmt.Sprintf("%s %s", i.title, fileIcon)
 	}
 
 	return i.title
