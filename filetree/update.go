@@ -141,6 +141,10 @@ func (b Bubble) Update(msg tea.Msg) (Bubble, tea.Cmd) {
 			if !b.input.Focused() {
 				cmds = append(cmds, getDirectoryListingCmd(dirfs.HomeDirectory, b.showHidden))
 			}
+		case key.Matches(msg, rootShortcutKey):
+			if !b.input.Focused() {
+				cmds = append(cmds, getDirectoryListingCmd(dirfs.RootDirectory, b.showHidden))
+			}
 		case key.Matches(msg, copyToClipboardKey):
 			if !b.input.Focused() {
 				selectedItem := b.GetSelectedItem()

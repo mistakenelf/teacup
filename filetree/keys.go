@@ -15,6 +15,7 @@ var (
 	unzipItemKey       = key.NewBinding(key.WithKeys("u"), key.WithHelp("u", "unzip item"))
 	toggleHiddenKey    = key.NewBinding(key.WithKeys("."), key.WithHelp(".", "toggle hidden files"))
 	homeShortcutKey    = key.NewBinding(key.WithKeys("~"), key.WithHelp("~", "go to home directory"))
+	rootShortcutKey    = key.NewBinding(key.WithKeys("R"), key.WithHelp("R", "go to root directory"))
 	copyToClipboardKey = key.NewBinding(key.WithKeys("y"), key.WithHelp("y", "copy path to clipboard"))
 	renameItemKey      = key.NewBinding(key.WithKeys("r"), key.WithHelp("r", "rename item"))
 	openInEditorKey    = key.NewBinding(key.WithKeys("e"), key.WithHelp("e", "open in editor"))
