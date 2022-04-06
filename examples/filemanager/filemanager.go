@@ -40,7 +40,7 @@ type Bubble struct {
 
 // New creates a new instance of the UI.
 func New() Bubble {
-	filetreeModel := filetree.New(true, false, lipgloss.AdaptiveColor{Light: "#000000", Dark: "63"})
+	filetreeModel := filetree.New(true, false, lipgloss.AdaptiveColor{Light: "#000000", Dark: "63"}, lipgloss.AdaptiveColor{Light: "#000000", Dark: "63"})
 	codeModel := code.New(false, false, lipgloss.AdaptiveColor{Light: "#000000", Dark: "#ffffff"})
 	imageModel := image.New(false, false, lipgloss.AdaptiveColor{Light: "#000000", Dark: "#ffffff"})
 	markdownModel := markdown.New(false, false, lipgloss.AdaptiveColor{Light: "#000000", Dark: "#ffffff"})
