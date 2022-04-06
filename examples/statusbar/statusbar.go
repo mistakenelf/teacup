@@ -34,6 +34,7 @@ func New() Bubble {
 			Background: lipgloss.AdaptiveColor{Light: "#6124DF", Dark: "#6124DF"},
 		},
 	)
+
 	return Bubble{
 		statusbar: sb,
 	}
