@@ -46,8 +46,14 @@ func New() Bubble {
 	markdownModel := markdown.New(false, false, lipgloss.AdaptiveColor{Light: "#000000", Dark: "#ffffff"})
 	pdfModel := pdf.New(false, false, lipgloss.AdaptiveColor{Light: "#000000", Dark: "#ffffff"})
 	helpModel := help.New(
-		lipgloss.AdaptiveColor{Light: "#000000", Dark: "#ffffff"},
+		false,
+		false,
 		"Help",
+		help.TitleColor{
+			Background: lipgloss.AdaptiveColor{Light: "62", Dark: "62"},
+			Foreground: lipgloss.AdaptiveColor{Light: "230", Dark: "230"},
+		},
+		lipgloss.AdaptiveColor{Light: "#000000", Dark: "#ffffff"},
 		[]help.Entry{
 			{Key: "ctrl+c", Description: "Exit FM"},
 			{Key: "j/up", Description: "Move up"},
@@ -71,8 +77,6 @@ func New() Bubble {
 			{Key: "esc", Description: "Reset FM to initial state"},
 			{Key: "tab", Description: "Toggle between boxes"},
 		},
-		false,
-		false,
 	)
 
 	return Bubble{

@@ -16,8 +16,14 @@ type Bubble struct {
 // New create a new instance of the UI.
 func New() Bubble {
 	helpModel := help.New(
-		lipgloss.AdaptiveColor{Light: "#000000", Dark: "#ffffff"},
+		false,
+		false,
 		"Help",
+		help.TitleColor{
+			Background: lipgloss.AdaptiveColor{Light: "62", Dark: "62"},
+			Foreground: lipgloss.AdaptiveColor{Light: "230", Dark: "230"},
+		},
+		lipgloss.AdaptiveColor{Light: "#000000", Dark: "#ffffff"},
 		[]help.Entry{
 			{Key: "ctrl+c", Description: "Exit FM"},
 			{Key: "j/up", Description: "Move up"},
@@ -25,13 +31,9 @@ func New() Bubble {
 			{Key: "h/left", Description: "Go back a directory"},
 			{Key: "l/right", Description: "Read file or enter directory"},
 			{Key: "p", Description: "Preview directory"},
-			{Key: "gg", Description: "Go to top of filetree or box"},
-			{Key: "G", Description: "Go to bottom of filetree or box"},
+			{Key: "G", Description: "Jump to bottom"},
 			{Key: "~", Description: "Go to home directory"},
-			{Key: "/", Description: "Go to root directory"},
 			{Key: ".", Description: "Toggle hidden files"},
-			{Key: "S", Description: "Only show directories"},
-			{Key: "s", Description: "Only show files"},
 			{Key: "y", Description: "Copy file path to clipboard"},
 			{Key: "Z", Description: "Zip currently selected tree item"},
 			{Key: "U", Description: "Unzip currently selected tree item"},
@@ -43,11 +45,8 @@ func New() Bubble {
 			{Key: "E", Description: "Edit currently selected tree item"},
 			{Key: "C", Description: "Copy currently selected tree item"},
 			{Key: "esc", Description: "Reset FM to initial state"},
-			{Key: "O", Description: "Show logs if debugging enabled"},
 			{Key: "tab", Description: "Toggle between boxes"},
 		},
-		true,
-		false,
 	)
 
 	return Bubble{

@@ -16,6 +16,11 @@ const (
 	KeyWidth = 12
 )
 
+type TitleColor struct {
+	Background lipgloss.AdaptiveColor
+	Foreground lipgloss.AdaptiveColor
+}
+
 // Entry represents a single entry in the help bubble.
 type Entry struct {
 	Key         string
@@ -28,12 +33,13 @@ type Bubble struct {
 	Entries     []Entry
 	BorderColor lipgloss.AdaptiveColor
 	Title       string
+	TitleColor  TitleColor
 	Active      bool
 	Borderless  bool
 }
 
 // generateHelpScreen generates the help text based on the title and entries.
-func generateHelpScreen(title string, entries []Entry, width, height int) string {
+func generateHelpScreen(title string, titleColor TitleColor, entries []Entry, width, height int) string {
 	helpScreen := ""
 
 	for _, content := range entries {
@@ -51,9 +57,9 @@ func generateHelpScreen(title string, entries []Entry, width, height int) string
 		helpScreen += fmt.Sprintf("%s\n", row)
 	}
 
-	welcomeText := lipgloss.NewStyle().Bold(true).
-		Background(lipgloss.Color("62")).
-		Foreground(lipgloss.Color("230")).
+	titleText := lipgloss.NewStyle().Bold(true).
+		Background(titleColor.Background).
+		Foreground(titleColor.Foreground).
 		Border(lipgloss.NormalBorder()).
 		Padding(0, 1).
 		Italic(true).
@@ -68,17 +74,18 @@ func generateHelpScreen(title string, entries []Entry, width, height int) string
 		Height(height).
 		Render(lipgloss.JoinVertical(
 			lipgloss.Top,
-			welcomeText,
+			titleText,
 			helpScreen,
 		))
 }
 
 // New creates a new instance of a help bubble.
 func New(
-	borderColor lipgloss.AdaptiveColor,
-	title string,
-	entries []Entry,
 	active, borderless bool,
+	title string,
+	titleColor TitleColor,
+	borderColor lipgloss.AdaptiveColor,
+	entries []Entry,
 ) Bubble {
 	viewPort := viewport.New(0, 0)
 	border := lipgloss.NormalBorder()
@@ -93,7 +100,7 @@ func New(
 		Border(border).
 		BorderForeground(borderColor)
 
-	viewPort.SetContent(generateHelpScreen(title, entries, 0, 0))
+	viewPort.SetContent(generateHelpScreen(title, titleColor, entries, 0, 0))
 
 	return Bubble{
 		Viewport:    viewPort,
@@ -102,6 +109,7 @@ func New(
 		Active:      active,
 		Borderless:  borderless,
 		BorderColor: borderColor,
+		TitleColor:  titleColor,
 	}
 }
 
@@ -110,7 +118,7 @@ func (b *Bubble) SetSize(w, h int) {
 	b.Viewport.Width = w - b.Viewport.Style.GetHorizontalFrameSize()
 	b.Viewport.Height = h - b.Viewport.Style.GetVerticalFrameSize()
 
-	b.Viewport.SetContent(generateHelpScreen(b.Title, b.Entries, b.Viewport.Width, b.Viewport.Height))
+	b.Viewport.SetContent(generateHelpScreen(b.Title, b.TitleColor, b.Entries, b.Viewport.Width, b.Viewport.Height))
 }
 
 // SetBorderColor sets the current color of the border.
@@ -126,6 +134,11 @@ func (b *Bubble) SetIsActive(active bool) {
 // GotoTop jumps to the top of the viewport.
 func (b *Bubble) GotoTop() {
 	b.Viewport.GotoTop()
+}
+
+// SetTitleColor sets the color of the title.
+func (b *Bubble) SetTitleColor(color TitleColor) {
+	b.TitleColor = color
 }
 
 // Update handles UI interactions with the help bubble.
