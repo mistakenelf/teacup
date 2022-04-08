@@ -160,24 +160,31 @@ func (b Bubble) Update(msg tea.Msg) (Bubble, tea.Cmd) {
 			if !b.input.Focused() {
 				selectedItem := b.GetSelectedItem()
 
-				editorPath := os.Getenv("EDITOR")
-				if editorPath == "" {
-					return b, handleErrorCmd(errors.New("$EDITOR not set"))
+				if b.selectionPath == "" && !selectedItem.IsDirectory() {
+					editorPath := os.Getenv("EDITOR")
+					if editorPath == "" {
+						return b, handleErrorCmd(errors.New("$EDITOR not set"))
+					}
+
+					editorCmd := exec.Command(editorPath, selectedItem.FileName())
+					editorCmd.Stdin = os.Stdin
+					editorCmd.Stdout = os.Stdout
+					editorCmd.Stderr = os.Stderr
+
+					err := editorCmd.Run()
+					termenv.AltScreen()
+
+					if err != nil {
+						return b, handleErrorCmd(err)
+					}
+
+					return b, tea.Batch(b.redrawCmd(), tea.HideCursor)
 				}
 
-				editorCmd := exec.Command(editorPath, selectedItem.FileName())
-				editorCmd.Stdin = os.Stdin
-				editorCmd.Stdout = os.Stdout
-				editorCmd.Stderr = os.Stderr
-
-				err := editorCmd.Run()
-				termenv.AltScreen()
-
-				if err != nil {
-					return b, handleErrorCmd(err)
-				}
-
-				return b, tea.Batch(b.redrawCmd(), tea.HideCursor)
+				return b, tea.Sequentially(
+					writeSelectionPathCmd(b.selectionPath, selectedItem.ShortName()),
+					tea.Quit,
+				)
 			}
 		case key.Matches(msg, submitInputKey):
 			selectedItem := b.GetSelectedItem()

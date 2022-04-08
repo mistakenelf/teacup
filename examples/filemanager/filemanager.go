@@ -43,6 +43,8 @@ func New() Bubble {
 	filetreeModel := filetree.New(
 		true,
 		false,
+		"",
+		"",
 		lipgloss.AdaptiveColor{Light: "#000000", Dark: "63"},
 		lipgloss.AdaptiveColor{Light: "#000000", Dark: "63"},
 		lipgloss.AdaptiveColor{Light: "63", Dark: "63"},

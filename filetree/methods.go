@@ -84,3 +84,13 @@ func (b *Bubble) SetIsActive(active bool) {
 func (b Bubble) IsFiltering() bool {
 	return b.list.FilterState() == list.Filtering
 }
+
+// SetStartDir sets a starting directory.
+func (b *Bubble) SetStartDir(dir string) {
+	b.startDir = dir
+}
+
+// SetSelectionPath sets the path in which to write to a file when editing.
+func (b *Bubble) SetSelectionPath(path string) {
+	b.selectionPath = path
+}

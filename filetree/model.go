@@ -21,18 +21,21 @@ const (
 
 // Bubble represents the properties of a filetree.
 type Bubble struct {
-	state      sessionState
-	list       list.Model
-	input      textinput.Model
-	showHidden bool
-	active     bool
-	width      int
-	height     int
+	state         sessionState
+	list          list.Model
+	input         textinput.Model
+	showHidden    bool
+	active        bool
+	width         int
+	height        int
+	startDir      string
+	selectionPath string
 }
 
 // New creates a new instance of a filetree.
 func New(
 	active, borderless bool,
+	startDir, selectionPath string,
 	borderColor, selectedItemColor, titleBackgroundColor, titleForegroundColor lipgloss.AdaptiveColor,
 ) Bubble {
 	listDelegate := list.NewDefaultDelegate()
@@ -99,10 +102,12 @@ func New(
 	}
 
 	return Bubble{
-		list:       listModel,
-		input:      input,
-		showHidden: true,
-		active:     active,
-		state:      idleState,
+		list:          listModel,
+		input:         input,
+		showHidden:    true,
+		active:        active,
+		state:         idleState,
+		startDir:      startDir,
+		selectionPath: selectionPath,
 	}
 }

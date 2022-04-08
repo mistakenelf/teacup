@@ -251,3 +251,14 @@ func (b Bubble) redrawCmd() tea.Cmd {
 		}
 	}
 }
+
+// writeSelectionPathCmd writes content to the file specified.
+func writeSelectionPathCmd(selectionPath, filePath string) tea.Cmd {
+	return func() tea.Msg {
+		if err := dirfs.WriteToFile(selectionPath, filePath); err != nil {
+			return errorMsg(err)
+		}
+
+		return nil
+	}
+}

@@ -15,7 +15,12 @@ func (b Bubble) Init() tea.Cmd {
 		cmds []tea.Cmd
 	)
 
-	cmd = getDirectoryListingCmd(dirfs.CurrentDirectory, b.showHidden)
+	if b.startDir == "" {
+		cmd = getDirectoryListingCmd(dirfs.CurrentDirectory, b.showHidden)
+	} else {
+		cmd = getDirectoryListingCmd(b.startDir, b.showHidden)
+	}
+
 	cmds = append(cmds, cmd, textinput.Blink)
 
 	return tea.Batch(cmds...)
