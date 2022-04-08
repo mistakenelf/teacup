@@ -33,14 +33,14 @@ func Highlight(content, extension, syntaxTheme string) (string, error) {
 }
 
 // readFileContentCmd reads the content of the file.
-func readFileContentCmd(fileName string) tea.Cmd {
+func readFileContentCmd(fileName, syntaxTheme string) tea.Cmd {
 	return func() tea.Msg {
 		content, err := dirfs.ReadFileContent(fileName)
 		if err != nil {
 			return errorMsg(err)
 		}
 
-		highlightedContent, err := Highlight(content, filepath.Ext(fileName), "dracula")
+		highlightedContent, err := Highlight(content, filepath.Ext(fileName), syntaxTheme)
 		if err != nil {
 			return errorMsg(err)
 		}
@@ -57,6 +57,7 @@ type Bubble struct {
 	Active             bool
 	Filename           string
 	HighlightedContent string
+	SyntaxTheme        string
 }
 
 // New creates a new instance of code.
@@ -91,7 +92,7 @@ func (b Bubble) Init() tea.Cmd {
 func (b *Bubble) SetFileName(filename string) tea.Cmd {
 	b.Filename = filename
 
-	return readFileContentCmd(filename)
+	return readFileContentCmd(filename, b.SyntaxTheme)
 }
 
 // SetIsActive sets if the bubble is currently active.
@@ -102,6 +103,11 @@ func (b *Bubble) SetIsActive(active bool) {
 // SetBorderColor sets the current color of the border.
 func (b *Bubble) SetBorderColor(color lipgloss.AdaptiveColor) {
 	b.BorderColor = color
+}
+
+// SetSyntaxTheme sets the syntax theme of the rendered code.
+func (b *Bubble) SetSyntaxTheme(theme string) {
+	b.SyntaxTheme = theme
 }
 
 // SetSize sets the size of the bubble.
