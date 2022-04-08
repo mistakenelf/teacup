@@ -21,7 +21,7 @@ func New() Bubble {
 		"Help",
 		help.TitleColor{
 			Background: lipgloss.AdaptiveColor{Light: "62", Dark: "62"},
-			Foreground: lipgloss.AdaptiveColor{Light: "230", Dark: "230"},
+			Foreground: lipgloss.AdaptiveColor{Light: "#ffffff", Dark: "#ffffffs"},
 		},
 		lipgloss.AdaptiveColor{Light: "#000000", Dark: "#ffffff"},
 		[]help.Entry{

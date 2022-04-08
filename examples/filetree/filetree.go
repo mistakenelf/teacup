@@ -15,10 +15,17 @@ type Bubble struct {
 
 // New creates a new instance of the UI.
 func New() Bubble {
-	f := filetree.New(true, false, lipgloss.AdaptiveColor{Light: "#000000", Dark: "#ffffff"}, lipgloss.AdaptiveColor{Light: "#000000", Dark: "63"})
+	filetreeModel := filetree.New(
+		true,
+		false,
+		lipgloss.AdaptiveColor{Light: "#000000", Dark: "63"},
+		lipgloss.AdaptiveColor{Light: "#000000", Dark: "63"},
+		lipgloss.AdaptiveColor{Light: "63", Dark: "63"},
+		lipgloss.AdaptiveColor{Light: "#ffffff", Dark: "#ffffff"},
+	)
 
 	return Bubble{
-		filetree: f,
+		filetree: filetreeModel,
 	}
 }
 

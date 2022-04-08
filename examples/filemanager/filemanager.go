@@ -40,8 +40,16 @@ type Bubble struct {
 
 // New creates a new instance of the UI.
 func New() Bubble {
-	filetreeModel := filetree.New(true, false, lipgloss.AdaptiveColor{Light: "#000000", Dark: "63"}, lipgloss.AdaptiveColor{Light: "#000000", Dark: "63"})
+	filetreeModel := filetree.New(
+		true,
+		false,
+		lipgloss.AdaptiveColor{Light: "#000000", Dark: "63"},
+		lipgloss.AdaptiveColor{Light: "#000000", Dark: "63"},
+		lipgloss.AdaptiveColor{Light: "63", Dark: "63"},
+		lipgloss.AdaptiveColor{Light: "#ffffff", Dark: "#ffffff"},
+	)
 	codeModel := code.New(false, false, lipgloss.AdaptiveColor{Light: "#000000", Dark: "#ffffff"})
+	codeModel.SetSyntaxTheme("pygments")
 	imageModel := image.New(false, false, lipgloss.AdaptiveColor{Light: "#000000", Dark: "#ffffff"})
 	markdownModel := markdown.New(false, false, lipgloss.AdaptiveColor{Light: "#000000", Dark: "#ffffff"})
 	pdfModel := pdf.New(false, false, lipgloss.AdaptiveColor{Light: "#000000", Dark: "#ffffff"})
@@ -51,7 +59,7 @@ func New() Bubble {
 		"Help",
 		help.TitleColor{
 			Background: lipgloss.AdaptiveColor{Light: "62", Dark: "62"},
-			Foreground: lipgloss.AdaptiveColor{Light: "230", Dark: "230"},
+			Foreground: lipgloss.AdaptiveColor{Light: "#ffffff", Dark: "#ffffff"},
 		},
 		lipgloss.AdaptiveColor{Light: "#000000", Dark: "#ffffff"},
 		[]help.Entry{
