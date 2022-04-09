@@ -94,3 +94,12 @@ func (b *Bubble) SetStartDir(dir string) {
 func (b *Bubble) SetSelectionPath(path string) {
 	b.selectionPath = path
 }
+
+// SetTitleColors sets the background and foreground of the title.
+func (b *Bubble) SetTitleColors(foreground, background lipgloss.AdaptiveColor) {
+	b.list.Styles.Title = b.list.Styles.Title.Copy().
+		Bold(true).
+		Italic(true).
+		Background(background).
+		Foreground(foreground)
+}
