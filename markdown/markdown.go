@@ -133,6 +133,11 @@ func (b *Bubble) SetSize(w, h int) tea.Cmd {
 	return nil
 }
 
+// SetBorderless sets weather or not to show the border.
+func (b *Bubble) SetBorderless(borderless bool) {
+	b.Borderless = borderless
+}
+
 // GotoTop jumps to the top of the viewport.
 func (b *Bubble) GotoTop() {
 	b.Viewport.GotoTop()

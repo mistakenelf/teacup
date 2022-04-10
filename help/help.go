@@ -143,6 +143,11 @@ func (b *Bubble) SetTitleColor(color TitleColor) {
 	b.Viewport.SetContent(generateHelpScreen(b.Title, b.TitleColor, b.Entries, b.Viewport.Width, b.Viewport.Height))
 }
 
+// SetBorderless sets weather or not to show the border.
+func (b *Bubble) SetBorderless(borderless bool) {
+	b.Borderless = borderless
+}
+
 // Update handles UI interactions with the help bubble.
 func (b Bubble) Update(msg tea.Msg) (Bubble, tea.Cmd) {
 	var (

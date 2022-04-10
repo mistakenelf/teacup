@@ -87,6 +87,11 @@ func New(active, borderless bool, borderColor lipgloss.AdaptiveColor) Bubble {
 	}
 }
 
+// SetBorderless sets weather or not to show the border.
+func (b *Bubble) SetBorderless(borderless bool) {
+	b.Borderless = borderless
+}
+
 // Init initializes the PDF bubble.
 func (b Bubble) Init() tea.Cmd {
 	return nil

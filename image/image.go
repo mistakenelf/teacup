@@ -155,6 +155,11 @@ func (b *Bubble) GotoTop() {
 	b.Viewport.GotoTop()
 }
 
+// SetBorderless sets weather or not to show the border.
+func (b *Bubble) SetBorderless(borderless bool) {
+	b.Borderless = borderless
+}
+
 // Update handles updating the UI of a code bubble.
 func (b Bubble) Update(msg tea.Msg) (Bubble, tea.Cmd) {
 	var (
