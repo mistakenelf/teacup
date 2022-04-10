@@ -38,8 +38,6 @@ func (b Bubble) Update(msg tea.Msg) (Bubble, tea.Cmd) {
 		}
 
 		switch b.state {
-		case createDirectoryState, createFileState, idleState, renameItemState:
-			return b, nil
 		case deleteItemState:
 			if msg.String() == yesKey {
 				selectedItem := b.GetSelectedItem()
