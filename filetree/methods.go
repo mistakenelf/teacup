@@ -103,3 +103,13 @@ func (b *Bubble) SetTitleColors(foreground, background lipgloss.AdaptiveColor) {
 		Background(background).
 		Foreground(foreground)
 }
+
+// SetSelectedItemColors sets the foreground of the selected item.
+func (b *Bubble) SetSelectedItemColors(foreground lipgloss.AdaptiveColor) {
+	b.delegate.Styles.SelectedTitle = b.delegate.Styles.SelectedTitle.Copy().
+		Foreground(foreground).
+		BorderLeftForeground(foreground)
+	b.delegate.Styles.SelectedDesc = b.delegate.Styles.SelectedTitle.Copy()
+
+	b.list.SetDelegate(b.delegate)
+}

@@ -30,6 +30,7 @@ type Bubble struct {
 	height        int
 	startDir      string
 	selectionPath string
+	delegate      list.DefaultDelegate
 }
 
 // New creates a new instance of a filetree.
@@ -109,5 +110,6 @@ func New(
 		state:         idleState,
 		startDir:      startDir,
 		selectionPath: selectionPath,
+		delegate:      listDelegate,
 	}
 }

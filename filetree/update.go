@@ -38,6 +38,8 @@ func (b Bubble) Update(msg tea.Msg) (Bubble, tea.Cmd) {
 		}
 
 		switch b.state {
+		case createDirectoryState, createFileState, idleState, renameItemState:
+			return b, nil
 		case deleteItemState:
 			if msg.String() == yesKey {
 				selectedItem := b.GetSelectedItem()
@@ -54,10 +56,11 @@ func (b Bubble) Update(msg tea.Msg) (Bubble, tea.Cmd) {
 				b.state = idleState
 
 				return b, tea.Batch(cmds...)
-			} else {
-				b.state = idleState
-				return b, nil
 			}
+
+			b.state = idleState
+
+			return b, nil
 		}
 
 		switch {
@@ -219,6 +222,8 @@ func (b Bubble) Update(msg tea.Msg) (Bubble, tea.Cmd) {
 					renameItemCmd(selectedItem.fileName, b.input.Value()),
 					getDirectoryListingCmd(dirfs.CurrentDirectory, b.showHidden),
 				))
+			case deleteItemState:
+				return b, nil
 			}
 
 			b.state = idleState
