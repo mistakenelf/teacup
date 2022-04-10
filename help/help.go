@@ -139,6 +139,8 @@ func (b *Bubble) GotoTop() {
 // SetTitleColor sets the color of the title.
 func (b *Bubble) SetTitleColor(color TitleColor) {
 	b.TitleColor = color
+
+	b.Viewport.SetContent(generateHelpScreen(b.Title, b.TitleColor, b.Entries, b.Viewport.Width, b.Viewport.Height))
 }
 
 // Update handles UI interactions with the help bubble.
