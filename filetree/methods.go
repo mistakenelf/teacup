@@ -6,6 +6,7 @@ import (
 	"fmt"
 
 	"github.com/charmbracelet/bubbles/list"
+	tea "github.com/charmbracelet/bubbletea"
 	"github.com/charmbracelet/lipgloss"
 )
 
@@ -124,6 +125,8 @@ func (b *Bubble) SetBorderless(borderless bool) {
 }
 
 // ToggleShowIcons sets weather or not to show icons.
-func (b *Bubble) ToggleShowIcons(showIcons bool) {
+func (b *Bubble) ToggleShowIcons(showIcons bool) tea.Cmd {
 	b.showIcons = showIcons
+
+	return getDirectoryListingCmd(b.startDir, b.showHidden, b.showIcons)
 }
