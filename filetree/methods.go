@@ -118,9 +118,9 @@ func (b *Bubble) SetSelectedItemColors(foreground lipgloss.AdaptiveColor) {
 // SetBorderless sets weather or not to show the border.
 func (b *Bubble) SetBorderless(borderless bool) {
 	if borderless {
-		bubbleStyle = bubbleStyle.Copy().Border(lipgloss.HiddenBorder())
+		bubbleStyle = bubbleStyle.Copy().BorderStyle(lipgloss.HiddenBorder())
 	} else {
-		bubbleStyle = bubbleStyle.Copy()
+		bubbleStyle = bubbleStyle.Copy().BorderStyle(lipgloss.NormalBorder())
 	}
 }
 
