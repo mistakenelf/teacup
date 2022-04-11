@@ -25,6 +25,7 @@ type Bubble struct {
 	list          list.Model
 	input         textinput.Model
 	showHidden    bool
+	showIcons     bool
 	active        bool
 	width         int
 	height        int
@@ -106,6 +107,7 @@ func New(
 		list:          listModel,
 		input:         input,
 		showHidden:    true,
+		showIcons:     true,
 		active:        active,
 		state:         idleState,
 		startDir:      startDir,

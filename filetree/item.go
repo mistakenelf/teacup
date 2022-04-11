@@ -20,6 +20,7 @@ type item struct {
 	extension        string
 	currentDirectory string
 	isDirectory      bool
+	showIcons        bool
 	fileInfo         fs.FileInfo
 }
 
@@ -33,7 +34,11 @@ func (i item) Title() string {
 		)
 		fileIcon := lipgloss.NewStyle().Width(fileIconWidth).Render(fmt.Sprintf("%s%s\033[0m ", color, icon))
 
-		return fmt.Sprintf("%s %s", i.title, fileIcon)
+		if i.showIcons {
+			return fmt.Sprintf("%s %s", i.title, fileIcon)
+		}
+
+		return i.title
 	}
 
 	return i.title

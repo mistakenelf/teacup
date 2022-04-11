@@ -16,9 +16,9 @@ func (b Bubble) Init() tea.Cmd {
 	)
 
 	if b.startDir == "" {
-		cmd = getDirectoryListingCmd(dirfs.CurrentDirectory, b.showHidden)
+		cmd = getDirectoryListingCmd(dirfs.CurrentDirectory, b.showHidden, b.showIcons)
 	} else {
-		cmd = getDirectoryListingCmd(b.startDir, b.showHidden)
+		cmd = getDirectoryListingCmd(b.startDir, b.showHidden, b.showIcons)
 	}
 
 	cmds = append(cmds, cmd, textinput.Blink)

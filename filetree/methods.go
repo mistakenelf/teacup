@@ -122,3 +122,8 @@ func (b *Bubble) SetBorderless(borderless bool) {
 		bubbleStyle = bubbleStyle.Copy()
 	}
 }
+
+// ToggleShowIcons sets weather or not to show icons.
+func (b *Bubble) ToggleShowIcons(showIcons bool) {
+	b.showIcons = showIcons
+}

@@ -18,7 +18,7 @@ type errorMsg error
 type copyToClipboardMsg string
 
 // getDirectoryListingCmd updates the directory listing based on the name of the directory provided.
-func getDirectoryListingCmd(name string, showHidden bool) tea.Cmd {
+func getDirectoryListingCmd(name string, showHidden, showIcons bool) tea.Cmd {
 	return func() tea.Msg {
 		var err error
 		var items []list.Item
@@ -64,6 +64,7 @@ func getDirectoryListingCmd(name string, showHidden bool) tea.Cmd {
 			isDirectory:      directoryInfo.IsDir(),
 			currentDirectory: workingDirectory,
 			fileInfo:         nil,
+			showIcons:        false,
 		})
 
 		for _, file := range files {
@@ -97,6 +98,7 @@ func getDirectoryListingCmd(name string, showHidden bool) tea.Cmd {
 					isDirectory:      symlinkFileInfo.IsDir(),
 					currentDirectory: workingDirectory,
 					fileInfo:         fileInfo,
+					showIcons:        showIcons,
 				})
 			} else {
 				status := fmt.Sprintf("%s %s %s",
@@ -113,6 +115,7 @@ func getDirectoryListingCmd(name string, showHidden bool) tea.Cmd {
 					isDirectory:      fileInfo.IsDir(),
 					currentDirectory: workingDirectory,
 					fileInfo:         fileInfo,
+					showIcons:        showIcons,
 				})
 			}
 		}

@@ -48,7 +48,7 @@ func (b Bubble) Update(msg tea.Msg) (Bubble, tea.Cmd) {
 
 				cmds = append(cmds, statusCmd, tea.Sequentially(
 					deleteItemCmd(selectedItem.fileName),
-					getDirectoryListingCmd(dirfs.CurrentDirectory, b.showHidden),
+					getDirectoryListingCmd(dirfs.CurrentDirectory, b.showHidden, b.showIcons),
 				))
 
 				b.state = idleState
@@ -65,7 +65,7 @@ func (b Bubble) Update(msg tea.Msg) (Bubble, tea.Cmd) {
 		case key.Matches(msg, openDirectoryKey):
 			if !b.input.Focused() {
 				selectedDir := b.GetSelectedItem()
-				cmds = append(cmds, getDirectoryListingCmd(selectedDir.fileName, b.showHidden))
+				cmds = append(cmds, getDirectoryListingCmd(selectedDir.fileName, b.showHidden, b.showIcons))
 			}
 		case key.Matches(msg, copyItemKey):
 			if !b.input.Focused() {
@@ -76,7 +76,7 @@ func (b Bubble) Update(msg tea.Msg) (Bubble, tea.Cmd) {
 
 				cmds = append(cmds, statusCmd, tea.Sequentially(
 					copyItemCmd(selectedItem.fileName),
-					getDirectoryListingCmd(dirfs.CurrentDirectory, b.showHidden),
+					getDirectoryListingCmd(dirfs.CurrentDirectory, b.showHidden, b.showIcons),
 				))
 			}
 		case key.Matches(msg, zipItemKey):
@@ -88,7 +88,7 @@ func (b Bubble) Update(msg tea.Msg) (Bubble, tea.Cmd) {
 
 				cmds = append(cmds, statusCmd, tea.Sequentially(
 					zipItemCmd(selectedItem.fileName),
-					getDirectoryListingCmd(dirfs.CurrentDirectory, b.showHidden),
+					getDirectoryListingCmd(dirfs.CurrentDirectory, b.showHidden, b.showIcons),
 				))
 			}
 		case key.Matches(msg, unzipItemKey):
@@ -100,7 +100,7 @@ func (b Bubble) Update(msg tea.Msg) (Bubble, tea.Cmd) {
 
 				cmds = append(cmds, statusCmd, tea.Sequentially(
 					unzipItemCmd(selectedItem.fileName),
-					getDirectoryListingCmd(dirfs.CurrentDirectory, b.showHidden),
+					getDirectoryListingCmd(dirfs.CurrentDirectory, b.showHidden, b.showIcons),
 				))
 			}
 		case key.Matches(msg, createFileKey):
@@ -136,15 +136,15 @@ func (b Bubble) Update(msg tea.Msg) (Bubble, tea.Cmd) {
 		case key.Matches(msg, toggleHiddenKey):
 			if !b.input.Focused() {
 				b.showHidden = !b.showHidden
-				cmds = append(cmds, getDirectoryListingCmd(dirfs.CurrentDirectory, b.showHidden))
+				cmds = append(cmds, getDirectoryListingCmd(dirfs.CurrentDirectory, b.showHidden, b.showIcons))
 			}
 		case key.Matches(msg, homeShortcutKey):
 			if !b.input.Focused() {
-				cmds = append(cmds, getDirectoryListingCmd(dirfs.HomeDirectory, b.showHidden))
+				cmds = append(cmds, getDirectoryListingCmd(dirfs.HomeDirectory, b.showHidden, b.showIcons))
 			}
 		case key.Matches(msg, rootShortcutKey):
 			if !b.input.Focused() {
-				cmds = append(cmds, getDirectoryListingCmd(dirfs.RootDirectory, b.showHidden))
+				cmds = append(cmds, getDirectoryListingCmd(dirfs.RootDirectory, b.showHidden, b.showIcons))
 			}
 		case key.Matches(msg, copyToClipboardKey):
 			if !b.input.Focused() {
@@ -200,7 +200,7 @@ func (b Bubble) Update(msg tea.Msg) (Bubble, tea.Cmd) {
 
 				cmds = append(cmds, statusCmd, tea.Sequentially(
 					createFileCmd(b.input.Value()),
-					getDirectoryListingCmd(dirfs.CurrentDirectory, b.showHidden),
+					getDirectoryListingCmd(dirfs.CurrentDirectory, b.showHidden, b.showIcons),
 				))
 			case createDirectoryState:
 				statusCmd := b.list.NewStatusMessage(
@@ -209,7 +209,7 @@ func (b Bubble) Update(msg tea.Msg) (Bubble, tea.Cmd) {
 
 				cmds = append(cmds, statusCmd, tea.Sequentially(
 					createDirectoryCmd(b.input.Value()),
-					getDirectoryListingCmd(dirfs.CurrentDirectory, b.showHidden),
+					getDirectoryListingCmd(dirfs.CurrentDirectory, b.showHidden, b.showIcons),
 				))
 			case renameItemState:
 				statusCmd := b.list.NewStatusMessage(
@@ -218,7 +218,7 @@ func (b Bubble) Update(msg tea.Msg) (Bubble, tea.Cmd) {
 
 				cmds = append(cmds, statusCmd, tea.Sequentially(
 					renameItemCmd(selectedItem.fileName, b.input.Value()),
-					getDirectoryListingCmd(dirfs.CurrentDirectory, b.showHidden),
+					getDirectoryListingCmd(dirfs.CurrentDirectory, b.showHidden, b.showIcons),
 				))
 			case deleteItemState:
 				return b, nil
