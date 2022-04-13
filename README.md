@@ -28,9 +28,32 @@ go install github.com/knipferrc/teacup@latest
 
 - dirfs - A collection of helper functions for working with the filesystem
 - icons - A package to render file icons
-- help - Render help text, for example, a keymap
-- filetree - Navigate and perform actions on files
-- image - Render an image as a string
-- markdown - Render formatted markdown
-- pdf - Render pdf as a string
-- code - Render syntax highlighted text
+- Filetree, Statusbar, Markdown, PDF, Image, Help and Code bubbles
+
+## Filetree
+
+![filetree](./assets/filetree.png)
+
+## Code
+
+![code](./assets/code.png)
+
+## Help
+
+![help](./assets/help.png)
+
+## Statusbar
+
+![statusbar](./assets/statusbar.png)
+
+## Markdown
+
+![markdown](./assets/markdown.png)
+
+## PDF
+
+![PDF](./assets/pdf.png)
+
+## Image
+
+![image](./assets/image.png)
