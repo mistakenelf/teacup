@@ -30,12 +30,16 @@ type Bubble struct {
 
 // ReadPdf reads a PDF file given a name.
 func ReadPdf(name string) (string, error) {
-	f, reader, err := pdf.Open(name)
+	file, reader, err := pdf.Open(name)
 	if err != nil {
 		return "", errors.Unwrap(err)
 	}
 
-	defer f.Close()
+	defer func() {
+		if e := file.Close(); e != nil {
+			err = e
+		}
+	}()
 
 	buf := new(bytes.Buffer)
 	buffer, err := reader.GetPlainText()
