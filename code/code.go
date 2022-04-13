@@ -79,6 +79,7 @@ func New(active, borderless bool, borderColor lipgloss.AdaptiveColor) Bubble {
 		Borderless:  borderless,
 		Active:      active,
 		BorderColor: borderColor,
+		SyntaxTheme: "dracula",
 	}
 }
 
