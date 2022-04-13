@@ -1,5 +1,3 @@
-// Package filetree implements a filetree bubble which can be used
-// to navigate the filesystem and perform actions on files and directories.
 package filetree
 
 import (
@@ -55,7 +53,7 @@ func getDirectoryListingCmd(name string, showHidden, showIcons bool) tea.Cmd {
 			return errorMsg(err)
 		}
 
-		items = append(items, item{
+		items = append(items, Item{
 			title:            dirfs.PreviousDirectory,
 			desc:             "",
 			shortName:        dirfs.PreviousDirectory,
@@ -89,7 +87,7 @@ func getDirectoryListingCmd(name string, showHidden, showIcons bool) tea.Cmd {
 					symlinkFileInfo.Mode().String(),
 					ConvertBytesToSizeString(symlinkFileInfo.Size()))
 
-				items = append(items, item{
+				items = append(items, Item{
 					title:            fileInfo.Name(),
 					desc:             status,
 					shortName:        fileInfo.Name(),
@@ -106,7 +104,7 @@ func getDirectoryListingCmd(name string, showHidden, showIcons bool) tea.Cmd {
 					fileInfo.Mode().String(),
 					ConvertBytesToSizeString(fileInfo.Size()))
 
-				items = append(items, item{
+				items = append(items, Item{
 					title:            file.Name(),
 					desc:             status,
 					shortName:        file.Name(),

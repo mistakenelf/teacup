@@ -1,5 +1,3 @@
-// Package filetree implements a filetree bubble which can be used
-// to navigate the filesystem and perform actions on files and directories.
 package filetree
 
 import (
@@ -11,8 +9,11 @@ import (
 	"github.com/knipferrc/teacup/icons"
 )
 
-// item represents a list item.
-type item struct {
+// fileIconWidth represents the width of the file icons.
+const fileIconWidth = 2
+
+// Item represents a list item.
+type Item struct {
 	title            string
 	desc             string
 	fileName         string
@@ -25,7 +26,7 @@ type item struct {
 }
 
 // Title returns the title of the list item.
-func (i item) Title() string {
+func (i Item) Title() string {
 	if i.fileInfo != nil {
 		icon, color := icons.GetIcon(
 			i.fileInfo.Name(),
@@ -45,22 +46,22 @@ func (i item) Title() string {
 }
 
 // FileName returns the file name of the list item.
-func (i item) FileName() string { return i.fileName }
+func (i Item) FileName() string { return i.fileName }
 
 // FileExtension returns the extension of the list item.
-func (i item) FileExtension() string { return i.extension }
+func (i Item) FileExtension() string { return i.extension }
 
 // IsDirectory returns true if the list item is a directory.
-func (i item) IsDirectory() bool { return i.isDirectory }
+func (i Item) IsDirectory() bool { return i.isDirectory }
 
 // Description returns the description of the list item.
-func (i item) Description() string { return i.desc }
+func (i Item) Description() string { return i.desc }
 
 // FilterValue returns the current filter value.
-func (i item) FilterValue() string { return i.title }
+func (i Item) FilterValue() string { return i.title }
 
 // ShortName returns the short name of the selected item.
-func (i item) ShortName() string { return i.shortName }
+func (i Item) ShortName() string { return i.shortName }
 
 // CurrentDirectory returns the current directory of the tree
-func (i item) CurrentDirectory() string { return i.currentDirectory }
+func (i Item) CurrentDirectory() string { return i.currentDirectory }

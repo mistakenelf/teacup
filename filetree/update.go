@@ -1,5 +1,3 @@
-// Package filetree implements a filetree bubble which can be used
-// to navigate the filesystem and perform actions on files and directories.
 package filetree
 
 import (
@@ -12,6 +10,10 @@ import (
 	tea "github.com/charmbracelet/bubbletea"
 	"github.com/knipferrc/teacup/dirfs"
 	"github.com/muesli/termenv"
+)
+
+const (
+	yesKey = "y"
 )
 
 // Update handles updating the filetree.

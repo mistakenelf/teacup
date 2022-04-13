@@ -10,10 +10,9 @@ import (
 	"github.com/charmbracelet/lipgloss"
 )
 
-// Constants used throughout the help bubble.
 const (
-	Padding  = 1
-	KeyWidth = 12
+	padding  = 1
+	keyWidth = 12
 )
 
 type TitleColor struct {
@@ -46,7 +45,7 @@ func generateHelpScreen(title string, titleColor TitleColor, entries []Entry, wi
 		keyText := lipgloss.NewStyle().
 			Bold(true).
 			Foreground(lipgloss.AdaptiveColor{Dark: "#ffffff", Light: "#000000"}).
-			Width(KeyWidth).
+			Width(keyWidth).
 			Render(content.Key)
 
 		descriptionText := lipgloss.NewStyle().
@@ -95,8 +94,8 @@ func New(
 	}
 
 	viewPort.Style = lipgloss.NewStyle().
-		PaddingLeft(Padding).
-		PaddingRight(Padding).
+		PaddingLeft(padding).
+		PaddingRight(padding).
 		Border(border).
 		BorderForeground(borderColor)
 
@@ -172,8 +171,8 @@ func (b Bubble) View() string {
 	}
 
 	b.Viewport.Style = lipgloss.NewStyle().
-		PaddingLeft(Padding).
-		PaddingRight(Padding).
+		PaddingLeft(padding).
+		PaddingRight(padding).
 		Border(border).
 		BorderForeground(b.BorderColor)
 

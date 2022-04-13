@@ -1,5 +1,3 @@
-// Package filetree implements a filetree bubble which can be used
-// to navigate the filesystem and perform actions on files and directories.
 package filetree
 
 import (

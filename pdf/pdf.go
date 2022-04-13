@@ -1,5 +1,5 @@
 // Package pdf provides an pdf bubble which can render
-// pdf files.
+// pdf files as strings.
 package pdf
 
 import (
@@ -15,9 +15,8 @@ import (
 type renderPDFMsg string
 type errorMsg error
 
-// Constants used throughout.
 const (
-	Padding = 1
+	padding = 1
 )
 
 // Bubble represents the properties of a pdf bubble.
@@ -75,8 +74,8 @@ func New(active, borderless bool, borderColor lipgloss.AdaptiveColor) Bubble {
 	}
 
 	viewPort.Style = lipgloss.NewStyle().
-		PaddingLeft(Padding).
-		PaddingRight(Padding).
+		PaddingLeft(padding).
+		PaddingRight(padding).
 		Border(border).
 		BorderForeground(borderColor)
 
@@ -122,8 +121,8 @@ func (b *Bubble) SetSize(w, h int) {
 	}
 
 	b.Viewport.Style = lipgloss.NewStyle().
-		PaddingLeft(Padding).
-		PaddingRight(Padding).
+		PaddingLeft(padding).
+		PaddingRight(padding).
 		Border(border).
 		BorderForeground(b.BorderColor)
 }
@@ -179,8 +178,8 @@ func (b Bubble) View() string {
 	}
 
 	b.Viewport.Style = lipgloss.NewStyle().
-		PaddingLeft(Padding).
-		PaddingRight(Padding).
+		PaddingLeft(padding).
+		PaddingRight(padding).
 		Border(border).
 		BorderForeground(b.BorderColor)
 

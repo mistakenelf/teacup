@@ -1,13 +1,6 @@
-// Package filetree implements a filetree bubble which can be used
-// to navigate the filesystem and perform actions on files and directories.
 package filetree
 
 import "github.com/charmbracelet/lipgloss"
-
-const (
-	fileIconWidth = 2
-	yesKey        = "y"
-)
 
 var (
 	bubbleStyle = lipgloss.NewStyle().

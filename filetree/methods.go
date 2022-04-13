@@ -1,5 +1,3 @@
-// Package filetree implements a filetree bubble which can be used
-// to navigate the filesystem and perform actions on files and directories.
 package filetree
 
 import (
@@ -10,9 +8,15 @@ import (
 	"github.com/charmbracelet/lipgloss"
 )
 
+const (
+	thousand    = 1000
+	ten         = 10
+	fivePercent = 0.0499
+)
+
 // ConvertBytesToSizeString converts a byte count to a human readable string.
 func ConvertBytesToSizeString(size int64) string {
-	if size < 1000 {
+	if size < thousand {
 		return fmt.Sprintf("%dB", size)
 	}
 
@@ -27,14 +31,14 @@ func ConvertBytesToSizeString(size int64) string {
 		"Y", // yotta
 	}
 
-	curr := float64(size) / 1000
+	curr := float64(size) / thousand
 	for _, s := range suffix {
-		if curr < 10 {
-			return fmt.Sprintf("%.1f%s", curr-0.0499, s)
-		} else if curr < 1000 {
+		if curr < ten {
+			return fmt.Sprintf("%.1f%s", curr-fivePercent, s)
+		} else if curr < thousand {
 			return fmt.Sprintf("%d%s", int(curr), s)
 		}
-		curr /= 1000
+		curr /= thousand
 	}
 
 	return ""
@@ -57,13 +61,13 @@ func (b *Bubble) SetBorderColor(color lipgloss.AdaptiveColor) {
 }
 
 // GetSelectedItem returns the currently selected item in the tree.
-func (b Bubble) GetSelectedItem() item {
-	selectedDir, ok := b.list.SelectedItem().(item)
+func (b Bubble) GetSelectedItem() Item {
+	selectedDir, ok := b.list.SelectedItem().(Item)
 	if ok {
 		return selectedDir
 	}
 
-	return item{}
+	return Item{}
 }
 
 // Cursor returns the current position of the cursor in the tree.

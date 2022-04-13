@@ -1,3 +1,5 @@
+// Package icons provides a set of unicode icons
+// based on type and extension.
 package icons
 
 import (

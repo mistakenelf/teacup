@@ -25,7 +25,3 @@ example-statusbar:
 .PHONY: example-iamge
 example-image:
 	@go run ./examples/image/image.go
-
-.PHONY: example-filemanager
-example-filemanager:
-	@go run ./examples/filemanager/filemanager.go

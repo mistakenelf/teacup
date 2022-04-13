@@ -18,9 +18,8 @@ import (
 type convertImageToStringMsg string
 type errorMsg error
 
-// Constants used throughout.
 const (
-	Padding = 1
+	padding = 1
 )
 
 // ToString converts an image to a string representation of an image.
@@ -90,8 +89,8 @@ func New(active, borderless bool, borderColor lipgloss.AdaptiveColor) Bubble {
 	}
 
 	viewPort.Style = lipgloss.NewStyle().
-		PaddingLeft(Padding).
-		PaddingRight(Padding).
+		PaddingLeft(padding).
+		PaddingRight(padding).
 		Border(border).
 		BorderForeground(borderColor)
 
@@ -133,8 +132,8 @@ func (b *Bubble) SetSize(w, h int) tea.Cmd {
 	}
 
 	b.Viewport.Style = lipgloss.NewStyle().
-		PaddingLeft(Padding).
-		PaddingRight(Padding).
+		PaddingLeft(padding).
+		PaddingRight(padding).
 		Border(border).
 		BorderForeground(b.BorderColor)
 
@@ -206,8 +205,8 @@ func (b Bubble) View() string {
 	}
 
 	b.Viewport.Style = lipgloss.NewStyle().
-		PaddingLeft(Padding).
-		PaddingRight(Padding).
+		PaddingLeft(padding).
+		PaddingRight(padding).
 		Border(border).
 		BorderForeground(b.BorderColor)
 

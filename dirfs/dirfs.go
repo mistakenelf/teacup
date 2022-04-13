@@ -1,4 +1,5 @@
-// Package dirfs implements various filesystem operations.
+// Package dirfs is a collection of various different filesystem
+// helper functions.
 package dirfs
 
 import (

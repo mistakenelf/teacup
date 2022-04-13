@@ -17,9 +17,8 @@ import (
 type syntaxMsg string
 type errorMsg error
 
-// Constants used throughout.
 const (
-	Padding = 1
+	padding = 1
 )
 
 // Highlight returns a syntax highlighted string of text.
@@ -70,8 +69,8 @@ func New(active, borderless bool, borderColor lipgloss.AdaptiveColor) Bubble {
 	}
 
 	viewPort.Style = lipgloss.NewStyle().
-		PaddingLeft(Padding).
-		PaddingRight(Padding).
+		PaddingLeft(padding).
+		PaddingRight(padding).
 		Border(border).
 		BorderForeground(borderColor)
 
@@ -178,8 +177,8 @@ func (b Bubble) View() string {
 	}
 
 	b.Viewport.Style = lipgloss.NewStyle().
-		PaddingLeft(Padding).
-		PaddingRight(Padding).
+		PaddingLeft(padding).
+		PaddingRight(padding).
 		Border(border).
 		BorderForeground(b.BorderColor)
 
