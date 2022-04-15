@@ -16,8 +16,8 @@ type Bubble struct {
 // New create a new instance of the UI.
 func New() Bubble {
 	helpModel := help.New(
-		false,
-		false,
+		true,
+		true,
 		"Help",
 		help.TitleColor{
 			Background: lipgloss.AdaptiveColor{Light: "62", Dark: "62"},

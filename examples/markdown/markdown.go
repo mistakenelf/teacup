@@ -15,7 +15,7 @@ type Bubble struct {
 
 // New creates a new instance of the UI.
 func New() Bubble {
-	markdownModel := markdown.New(true, false, lipgloss.AdaptiveColor{Light: "#000000", Dark: "#ffffff"})
+	markdownModel := markdown.New(true, true, lipgloss.AdaptiveColor{Light: "#000000", Dark: "#ffffff"})
 	markdownModel.FileName = "README.md"
 
 	return Bubble{

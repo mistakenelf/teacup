@@ -17,7 +17,7 @@ type Bubble struct {
 func New() Bubble {
 	filetreeModel := filetree.New(
 		true,
-		false,
+		true,
 		"",
 		"",
 		lipgloss.AdaptiveColor{Light: "#000000", Dark: "63"},

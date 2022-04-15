@@ -15,7 +15,7 @@ type Bubble struct {
 
 // New creates a new instance of the UI.
 func New() Bubble {
-	codeModel := code.New(true, false, lipgloss.AdaptiveColor{Light: "#000000", Dark: "#ffffff"})
+	codeModel := code.New(true, true, lipgloss.AdaptiveColor{Light: "#000000", Dark: "#ffffff"})
 
 	return Bubble{
 		code: codeModel,
