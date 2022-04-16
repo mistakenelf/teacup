@@ -122,6 +122,22 @@ func getDirectoryListingCmd(name string, showHidden, showIcons bool) tea.Cmd {
 	}
 }
 
+// moveItemCmd moves files to the current directory.
+func moveItemCmd(name string) tea.Cmd {
+	return func() tea.Msg {
+		workingDir, err := dirfs.GetWorkingDirectory()
+		if err != nil {
+			return errorMsg(err)
+		}
+
+		if err := dirfs.MoveDirectoryItem(name, workingDir); err != nil {
+			return errorMsg(err)
+		}
+
+		return nil
+	}
+}
+
 // createFileCmd creates a file based on the name provided.
 func createFileCmd(name string) tea.Cmd {
 	return func() tea.Msg {
