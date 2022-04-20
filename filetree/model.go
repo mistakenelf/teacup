@@ -18,6 +18,11 @@ const (
 	moveItemState
 )
 
+type itemToMove struct {
+	shortName string
+	path      string
+}
+
 // Bubble represents the properties of a filetree.
 type Bubble struct {
 	state         sessionState
@@ -30,7 +35,7 @@ type Bubble struct {
 	height        int
 	startDir      string
 	selectionPath string
-	itemToMove    string
+	itemToMove    itemToMove
 	delegate      list.DefaultDelegate
 }
 

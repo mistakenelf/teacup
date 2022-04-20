@@ -65,7 +65,7 @@ func (b Bubble) Update(msg tea.Msg) (Bubble, tea.Cmd) {
 				)
 
 				cmds = append(cmds, statusCmd, tea.Sequentially(
-					moveItemCmd(b.itemToMove),
+					moveItemCmd(b.itemToMove.path, b.itemToMove.shortName),
 					getDirectoryListingCmd(dirfs.CurrentDirectory, b.showHidden, b.showIcons),
 				))
 
@@ -143,7 +143,10 @@ func (b Bubble) Update(msg tea.Msg) (Bubble, tea.Cmd) {
 			if !b.input.Focused() {
 				selectedItem := b.GetSelectedItem()
 				b.state = moveItemState
-				b.itemToMove = selectedItem.fileName
+				b.itemToMove = itemToMove{
+					shortName: selectedItem.shortName,
+					path:      selectedItem.fileName,
+				}
 
 				return b, nil
 			}
@@ -174,10 +177,11 @@ func (b Bubble) Update(msg tea.Msg) (Bubble, tea.Cmd) {
 				cmds = append(cmds, copyToClipboardCmd(selectedItem.fileName))
 			}
 		case key.Matches(msg, escapeKey):
+			b.state = idleState
+
 			if b.input.Focused() {
 				b.input.Reset()
 				b.input.Blur()
-				b.state = idleState
 			}
 		case key.Matches(msg, openInEditorKey):
 			if !b.input.Focused() {
