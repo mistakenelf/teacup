@@ -15,6 +15,8 @@ func (b Bubble) View() string {
 		inputView = b.input.View()
 	case deleteItemState:
 		inputView = "Are you sure you want to delete? (y/n)"
+	case moveItemState:
+		inputView = "Currently moving item!"
 	default:
 		inputView = ""
 	}

@@ -17,5 +17,6 @@ var (
 	copyToClipboardKey = key.NewBinding(key.WithKeys("y"), key.WithHelp("y", "copy path to clipboard"))
 	renameItemKey      = key.NewBinding(key.WithKeys("r"), key.WithHelp("r", "rename item"))
 	openInEditorKey    = key.NewBinding(key.WithKeys("e"), key.WithHelp("e", "open in editor"))
+	moveItemKey        = key.NewBinding(key.WithKeys("m"), key.WithHelp("m", "move item"))
 	escapeKey          = key.NewBinding(key.WithKeys("esc"), key.WithHelp("esc", "reset to initial state"))
 )

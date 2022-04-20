@@ -13,7 +13,8 @@ import (
 )
 
 const (
-	yesKey = "y"
+	yesKey   = "y"
+	enterKey = "enter"
 )
 
 // Update handles updating the filetree.
@@ -57,10 +58,21 @@ func (b Bubble) Update(msg tea.Msg) (Bubble, tea.Cmd) {
 
 				return b, tea.Batch(cmds...)
 			}
+		case moveItemState:
+			if msg.String() == enterKey {
+				statusCmd := b.list.NewStatusMessage(
+					statusMessageInfoStyle("Successfully moved item"),
+				)
 
-			b.state = idleState
+				cmds = append(cmds, statusCmd, tea.Sequentially(
+					moveItemCmd(b.itemToMove.path, b.itemToMove.shortName),
+					getDirectoryListingCmd(dirfs.CurrentDirectory, b.showHidden, b.showIcons),
+				))
 
-			return b, nil
+				b.state = idleState
+
+				return b, tea.Batch(cmds...)
+			}
 		}
 
 		switch {
@@ -127,6 +139,17 @@ func (b Bubble) Update(msg tea.Msg) (Bubble, tea.Cmd) {
 
 				return b, nil
 			}
+		case key.Matches(msg, moveItemKey):
+			if !b.input.Focused() {
+				selectedItem := b.GetSelectedItem()
+				b.state = moveItemState
+				b.itemToMove = itemToMove{
+					shortName: selectedItem.shortName,
+					path:      selectedItem.fileName,
+				}
+
+				return b, nil
+			}
 		case key.Matches(msg, renameItemKey):
 			if !b.input.Focused() {
 				b.input.Focus()
@@ -154,10 +177,11 @@ func (b Bubble) Update(msg tea.Msg) (Bubble, tea.Cmd) {
 				cmds = append(cmds, copyToClipboardCmd(selectedItem.fileName))
 			}
 		case key.Matches(msg, escapeKey):
+			b.state = idleState
+
 			if b.input.Focused() {
 				b.input.Reset()
 				b.input.Blur()
-				b.state = idleState
 			}
 		case key.Matches(msg, openInEditorKey):
 			if !b.input.Focused() {
@@ -193,7 +217,7 @@ func (b Bubble) Update(msg tea.Msg) (Bubble, tea.Cmd) {
 			selectedItem := b.GetSelectedItem()
 
 			switch b.state {
-			case idleState:
+			case idleState, deleteItemState, moveItemState:
 				return b, nil
 			case createFileState:
 				statusCmd := b.list.NewStatusMessage(
@@ -222,8 +246,6 @@ func (b Bubble) Update(msg tea.Msg) (Bubble, tea.Cmd) {
 					renameItemCmd(selectedItem.fileName, b.input.Value()),
 					getDirectoryListingCmd(dirfs.CurrentDirectory, b.showHidden, b.showIcons),
 				))
-			case deleteItemState:
-				return b, nil
 			}
 
 			b.state = idleState
@@ -234,7 +256,7 @@ func (b Bubble) Update(msg tea.Msg) (Bubble, tea.Cmd) {
 
 	if b.active {
 		switch b.state {
-		case idleState:
+		case idleState, moveItemState:
 			b.list, cmd = b.list.Update(msg)
 			cmds = append(cmds, cmd)
 		case createFileState, createDirectoryState, renameItemState:

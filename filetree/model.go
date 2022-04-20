@@ -15,7 +15,13 @@ const (
 	createDirectoryState
 	deleteItemState
 	renameItemState
+	moveItemState
 )
+
+type itemToMove struct {
+	shortName string
+	path      string
+}
 
 // Bubble represents the properties of a filetree.
 type Bubble struct {
@@ -29,6 +35,7 @@ type Bubble struct {
 	height        int
 	startDir      string
 	selectionPath string
+	itemToMove    itemToMove
 	delegate      list.DefaultDelegate
 }
 
@@ -68,6 +75,7 @@ func New(
 			renameItemKey,
 			openInEditorKey,
 			submitInputKey,
+			moveItemKey,
 		}
 	}
 	listModel.AdditionalFullHelpKeys = func() []key.Binding {
@@ -86,6 +94,7 @@ func New(
 			renameItemKey,
 			openInEditorKey,
 			submitInputKey,
+			moveItemKey,
 		}
 	}
 
