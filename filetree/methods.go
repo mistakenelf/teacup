@@ -6,6 +6,7 @@ import (
 	"github.com/charmbracelet/bubbles/list"
 	tea "github.com/charmbracelet/bubbletea"
 	"github.com/charmbracelet/lipgloss"
+	"github.com/knipferrc/teacup/dirfs"
 )
 
 const (
@@ -132,5 +133,10 @@ func (b *Bubble) SetBorderless(borderless bool) {
 func (b *Bubble) ToggleShowIcons(showIcons bool) tea.Cmd {
 	b.showIcons = showIcons
 
-	return getDirectoryListingCmd(b.startDir, b.showHidden, b.showIcons)
+	return getDirectoryListingCmd(dirfs.CurrentDirectory, b.showHidden, b.showIcons)
+}
+
+// ToggleHelp sets weather or not to show the help section.
+func (b *Bubble) ToggleHelp(showHelp bool) {
+	b.list.SetShowHelp(showHelp)
 }
