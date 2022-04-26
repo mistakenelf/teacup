@@ -40,6 +40,10 @@ func (b Bubble) Update(msg tea.Msg) (Bubble, tea.Cmd) {
 			break
 		}
 
+        if !b.active {
+            return b, nil
+        }
+
 		switch b.state {
 		case deleteItemState:
 			if msg.String() == yesKey {
