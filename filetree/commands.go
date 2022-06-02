@@ -3,6 +3,7 @@ package filetree
 import (
 	"fmt"
 	"os"
+	"os/exec"
 	"path/filepath"
 
 	"github.com/atotto/clipboard"
@@ -14,6 +15,7 @@ import (
 type getDirectoryListingMsg []list.Item
 type errorMsg error
 type copyToClipboardMsg string
+type editorFinishedMsg struct{ err error }
 
 // getDirectoryListingCmd updates the directory listing based on the name of the directory provided.
 func getDirectoryListingCmd(name string, showHidden, showIcons bool) tea.Cmd {
@@ -252,23 +254,6 @@ func renameItemCmd(name, value string) tea.Cmd {
 	}
 }
 
-// handleErrorCmd returns an error message to the UI.
-func handleErrorCmd(err error) tea.Cmd {
-	return func() tea.Msg {
-		return errorMsg(err)
-	}
-}
-
-// redrawCmd redraws the UI.
-func (b Bubble) redrawCmd() tea.Cmd {
-	return func() tea.Msg {
-		return tea.WindowSizeMsg{
-			Width:  b.width,
-			Height: b.height,
-		}
-	}
-}
-
 // writeSelectionPathCmd writes content to the file specified.
 func writeSelectionPathCmd(selectionPath, filePath string) tea.Cmd {
 	return func() tea.Msg {
@@ -278,4 +263,18 @@ func writeSelectionPathCmd(selectionPath, filePath string) tea.Cmd {
 
 		return nil
 	}
+}
+
+// openInEditor opens the file in the editor specified and default to vim if not set.
+func openInEditor(fileName string) tea.Cmd {
+	editor := os.Getenv("EDITOR")
+	if editor == "" {
+		editor = "vim"
+	}
+
+	c := exec.Command(editor, fileName) //nolint:gosec
+
+	return tea.ExecProcess(c, func(err error) tea.Msg {
+		return editorFinishedMsg{err}
+	})
 }

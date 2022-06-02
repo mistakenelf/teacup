@@ -1,15 +1,10 @@
 package filetree
 
 import (
-	"errors"
-	"os"
-	"os/exec"
-
 	"github.com/charmbracelet/bubbles/key"
 	"github.com/charmbracelet/bubbles/textinput"
 	tea "github.com/charmbracelet/bubbletea"
 	"github.com/knipferrc/teacup/dirfs"
-	"github.com/muesli/termenv"
 )
 
 const (
@@ -40,9 +35,9 @@ func (b Bubble) Update(msg tea.Msg) (Bubble, tea.Cmd) {
 			break
 		}
 
-        if !b.active {
-            return b, nil
-        }
+		if !b.active {
+			return b, nil
+		}
 
 		switch b.state {
 		case deleteItemState:
@@ -192,24 +187,7 @@ func (b Bubble) Update(msg tea.Msg) (Bubble, tea.Cmd) {
 				selectedItem := b.GetSelectedItem()
 
 				if b.selectionPath == "" && !selectedItem.IsDirectory() {
-					editorPath := os.Getenv("EDITOR")
-					if editorPath == "" {
-						return b, handleErrorCmd(errors.New("$EDITOR not set"))
-					}
-
-					editorCmd := exec.Command(editorPath, selectedItem.FileName())
-					editorCmd.Stdin = os.Stdin
-					editorCmd.Stdout = os.Stdout
-					editorCmd.Stderr = os.Stderr
-
-					err := editorCmd.Run()
-					termenv.AltScreen()
-
-					if err != nil {
-						return b, handleErrorCmd(err)
-					}
-
-					return b, tea.Batch(b.redrawCmd(), tea.HideCursor)
+					return b, openInEditor(selectedItem.FileName())
 				}
 
 				return b, tea.Sequentially(
