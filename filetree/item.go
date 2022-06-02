@@ -63,5 +63,5 @@ func (i Item) FilterValue() string { return i.title }
 // ShortName returns the short name of the selected item.
 func (i Item) ShortName() string { return i.shortName }
 
-// CurrentDirectory returns the current directory of the tree
+// CurrentDirectory returns the current directory of the tree.
 func (i Item) CurrentDirectory() string { return i.currentDirectory }
