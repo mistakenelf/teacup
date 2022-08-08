@@ -18,13 +18,12 @@ type copyToClipboardMsg string
 type editorFinishedMsg struct{ err error }
 
 // getDirectoryListingCmd updates the directory listing based on the name of the directory provided.
-func getDirectoryListingCmd(name string, showHidden, showIcons bool) tea.Cmd {
+func getDirectoryListingCmd(directoryName string, showHidden, showIcons bool) tea.Cmd {
 	return func() tea.Msg {
 		var err error
 		var items []list.Item
 
-		directoryName := name
-		if name == dirfs.HomeDirectory {
+		if directoryName == dirfs.HomeDirectory {
 			directoryName, err = dirfs.GetHomeDirectory()
 			if err != nil {
 				return errorMsg(err)
@@ -76,12 +75,12 @@ func getDirectoryListingCmd(name string, showHidden, showIcons bool) tea.Cmd {
 			if fileInfo.Mode()&os.ModeSymlink == os.ModeSymlink {
 				symlinkFile, err := os.Readlink(fileInfo.Name())
 				if err != nil {
-					return errorMsg(err)
+					continue
 				}
 
 				symlinkFileInfo, err := os.Stat(symlinkFile)
 				if err != nil {
-					return errorMsg(err)
+					continue
 				}
 
 				status := fmt.Sprintf("%s %s %s",
