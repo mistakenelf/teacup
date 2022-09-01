@@ -186,19 +186,21 @@ func Zip(name string) error {
 		err = srcFile.Close()
 	}()
 
-	fileExtension := filepath.Ext(name)
+  fileExtension := filepath.Ext(name)
+	splitFileName := strings.Split(name, "/")
+	fileName := splitFileName[len(splitFileName)-1]
 	switch {
-	case strings.HasPrefix(name, ".") && fileExtension != "" && fileExtension == name:
-		output = fmt.Sprintf("%s_%d.zip", name, time.Now().Unix())
-	case strings.HasPrefix(name, ".") && fileExtension != "" && fileExtension != name:
-		splitName = strings.Split(name, ".")
+	case strings.HasPrefix(fileName, ".") && fileExtension != "" && fileExtension == fileName:
+		output = fmt.Sprintf("%s_%d.zip", fileName, time.Now().Unix())
+	case strings.HasPrefix(fileName, ".") && fileExtension != "" && fileExtension != fileName:
+		splitName = strings.Split(fileName, ".")
 		output = fmt.Sprintf(".%s_%d.zip", splitName[1], time.Now().Unix())
 	case fileExtension != "":
-		splitName = strings.Split(name, ".")
+		splitName = strings.Split(fileName, ".")
 		output = fmt.Sprintf("%s_%d.zip", splitName[0], time.Now().Unix())
 	default:
-		output = fmt.Sprintf("%s_%d.zip", name, time.Now().Unix())
-	}
+		output = fmt.Sprintf("%s_%d.zip", fileName, time.Now().Unix())
+	}	
 
 	newfile, err := os.Create(filepath.Clean(output))
 	if err != nil {
