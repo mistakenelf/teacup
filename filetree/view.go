@@ -2,7 +2,11 @@
 // to navigate the filesystem and perform actions on files and directories.
 package filetree
 
-import "github.com/charmbracelet/lipgloss"
+import (
+	"fmt"
+
+	"github.com/charmbracelet/lipgloss"
+)
 
 // View returns a string representation of a filetree.
 func (b Bubble) View() string {
@@ -16,7 +20,7 @@ func (b Bubble) View() string {
 	case deleteItemState:
 		inputView = "Are you sure you want to delete? (y/n)"
 	case moveItemState:
-		inputView = "Currently moving item!"
+		inputView = fmt.Sprintf("Currently moving %s", b.itemToMove.shortName)
 	default:
 		inputView = ""
 	}

@@ -36,7 +36,7 @@ func (i Item) Title() string {
 		fileIcon := lipgloss.NewStyle().Width(fileIconWidth).Render(fmt.Sprintf("%s%s\033[0m ", color, icon))
 
 		if i.showIcons {
-			return fmt.Sprintf("%s %s", i.title, fileIcon)
+			return fmt.Sprintf("%s %s", fileIcon, i.title)
 		}
 
 		return i.title
