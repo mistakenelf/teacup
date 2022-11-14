@@ -21,7 +21,7 @@ A collection of bubbles and utilities for creating bubbletea applications.
 ### Go
 
 ```
-go install github.com/knipferrc/teacup@latest
+go get github.com/knipferrc/teacup@latest
 ```
 
 ## Features
