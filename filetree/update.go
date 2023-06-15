@@ -13,241 +13,241 @@ const (
 )
 
 // Update handles updating the filetree.
-func (b Bubble) Update(msg tea.Msg) (Bubble, tea.Cmd) {
+func (m Model) Update(msg tea.Msg) (Model, tea.Cmd) {
 	var cmd tea.Cmd
 	var cmds []tea.Cmd
 
 	switch msg := msg.(type) {
 	case tea.WindowSizeMsg:
-		b.width = msg.Width
-		b.height = msg.Height
+		m.width = msg.Width
+		m.height = msg.Height
 	case getDirectoryListingMsg:
 		if msg != nil {
-			cmd = b.list.SetItems(msg)
+			cmd = m.list.SetItems(msg)
 			cmds = append(cmds, cmd)
 		}
 	case copyToClipboardMsg:
-		return b, b.list.NewStatusMessage(statusMessageInfoStyle(string(msg)))
+		return m, m.list.NewStatusMessage(statusMessageInfoStyle(string(msg)))
 	case errorMsg:
-		return b, b.list.NewStatusMessage(statusMessageErrorStyle(msg.Error()))
+		return m, m.list.NewStatusMessage(statusMessageErrorStyle(msg.Error()))
 	case tea.KeyMsg:
-		if b.IsFiltering() {
+		if m.IsFiltering() {
 			break
 		}
 
-		if !b.active {
-			return b, nil
+		if !m.active {
+			return m, nil
 		}
 
-		switch b.state {
+		switch m.state {
 		case deleteItemState:
 			if msg.String() == yesKey {
-				selectedItem := b.GetSelectedItem()
+				selectedItem := m.GetSelectedItem()
 
-				statusCmd := b.list.NewStatusMessage(
+				statusCmd := m.list.NewStatusMessage(
 					statusMessageInfoStyle("Successfully deleted item"),
 				)
 
-				cmds = append(cmds, statusCmd, tea.Sequentially(
+				cmds = append(cmds, statusCmd, tea.Sequence(
 					deleteItemCmd(selectedItem.fileName),
-					getDirectoryListingCmd(dirfs.CurrentDirectory, b.showHidden, b.showIcons),
+					getDirectoryListingCmd(dirfs.CurrentDirectory, m.showHidden, m.showIcons),
 				))
 
-				b.state = idleState
+				m.state = idleState
 
-				return b, tea.Batch(cmds...)
+				return m, tea.Batch(cmds...)
 			}
 		case moveItemState:
 			if msg.String() == enterKey {
-				statusCmd := b.list.NewStatusMessage(
+				statusCmd := m.list.NewStatusMessage(
 					statusMessageInfoStyle("Successfully moved item"),
 				)
 
-				cmds = append(cmds, statusCmd, tea.Sequentially(
-					moveItemCmd(b.itemToMove.path, b.itemToMove.shortName),
-					getDirectoryListingCmd(dirfs.CurrentDirectory, b.showHidden, b.showIcons),
+				cmds = append(cmds, statusCmd, tea.Sequence(
+					moveItemCmd(m.itemToMove.path, m.itemToMove.shortName),
+					getDirectoryListingCmd(dirfs.CurrentDirectory, m.showHidden, m.showIcons),
 				))
 
-				b.state = idleState
+				m.state = idleState
 
-				return b, tea.Batch(cmds...)
+				return m, tea.Batch(cmds...)
 			}
 		}
 
 		switch {
 		case key.Matches(msg, openDirectoryKey):
-			if !b.input.Focused() {
-				selectedDir := b.GetSelectedItem()
-				cmds = append(cmds, getDirectoryListingCmd(selectedDir.fileName, b.showHidden, b.showIcons))
+			if !m.input.Focused() {
+				selectedDir := m.GetSelectedItem()
+				cmds = append(cmds, getDirectoryListingCmd(selectedDir.fileName, m.showHidden, m.showIcons))
 			}
 		case key.Matches(msg, copyItemKey):
-			if !b.input.Focused() {
-				selectedItem := b.GetSelectedItem()
-				statusCmd := b.list.NewStatusMessage(
+			if !m.input.Focused() {
+				selectedItem := m.GetSelectedItem()
+				statusCmd := m.list.NewStatusMessage(
 					statusMessageInfoStyle("Successfully copied file"),
 				)
 
-				cmds = append(cmds, statusCmd, tea.Sequentially(
+				cmds = append(cmds, statusCmd, tea.Sequence(
 					copyItemCmd(selectedItem.fileName),
-					getDirectoryListingCmd(dirfs.CurrentDirectory, b.showHidden, b.showIcons),
+					getDirectoryListingCmd(dirfs.CurrentDirectory, m.showHidden, m.showIcons),
 				))
 			}
 		case key.Matches(msg, zipItemKey):
-			if !b.input.Focused() {
-				selectedItem := b.GetSelectedItem()
-				statusCmd := b.list.NewStatusMessage(
+			if !m.input.Focused() {
+				selectedItem := m.GetSelectedItem()
+				statusCmd := m.list.NewStatusMessage(
 					statusMessageInfoStyle("Successfully zipped item"),
 				)
 
-				cmds = append(cmds, statusCmd, tea.Sequentially(
+				cmds = append(cmds, statusCmd, tea.Sequence(
 					zipItemCmd(selectedItem.fileName),
-					getDirectoryListingCmd(dirfs.CurrentDirectory, b.showHidden, b.showIcons),
+					getDirectoryListingCmd(dirfs.CurrentDirectory, m.showHidden, m.showIcons),
 				))
 			}
 		case key.Matches(msg, unzipItemKey):
-			if !b.input.Focused() {
-				selectedItem := b.GetSelectedItem()
-				statusCmd := b.list.NewStatusMessage(
+			if !m.input.Focused() {
+				selectedItem := m.GetSelectedItem()
+				statusCmd := m.list.NewStatusMessage(
 					statusMessageInfoStyle("Successfully unzipped item"),
 				)
 
-				cmds = append(cmds, statusCmd, tea.Sequentially(
+				cmds = append(cmds, statusCmd, tea.Sequence(
 					unzipItemCmd(selectedItem.fileName),
-					getDirectoryListingCmd(dirfs.CurrentDirectory, b.showHidden, b.showIcons),
+					getDirectoryListingCmd(dirfs.CurrentDirectory, m.showHidden, m.showIcons),
 				))
 			}
 		case key.Matches(msg, createFileKey):
-			if !b.input.Focused() {
-				b.input.Focus()
-				b.input.Placeholder = "Enter name of new file"
-				b.state = createFileState
+			if !m.input.Focused() {
+				m.input.Focus()
+				m.input.Placeholder = "Enter name of new file"
+				m.state = createFileState
 
-				return b, textinput.Blink
+				return m, textinput.Blink
 			}
 		case key.Matches(msg, createDirectoryKey):
-			if !b.input.Focused() {
-				b.input.Focus()
-				b.input.Placeholder = "Enter name of new directory"
-				b.state = createDirectoryState
+			if !m.input.Focused() {
+				m.input.Focus()
+				m.input.Placeholder = "Enter name of new directory"
+				m.state = createDirectoryState
 
-				return b, textinput.Blink
+				return m, textinput.Blink
 			}
 		case key.Matches(msg, deleteItemKey):
-			if !b.input.Focused() {
-				b.state = deleteItemState
+			if !m.input.Focused() {
+				m.state = deleteItemState
 
-				return b, nil
+				return m, nil
 			}
 		case key.Matches(msg, moveItemKey):
-			if !b.input.Focused() {
-				selectedItem := b.GetSelectedItem()
-				b.state = moveItemState
-				b.itemToMove = itemToMove{
+			if !m.input.Focused() {
+				selectedItem := m.GetSelectedItem()
+				m.state = moveItemState
+				m.itemToMove = itemToMove{
 					shortName: selectedItem.shortName,
 					path:      selectedItem.fileName,
 				}
 
-				return b, nil
+				return m, nil
 			}
 		case key.Matches(msg, renameItemKey):
-			if !b.input.Focused() {
-				b.input.Focus()
-				b.input.Placeholder = "Enter new name"
-				b.state = renameItemState
+			if !m.input.Focused() {
+				m.input.Focus()
+				m.input.Placeholder = "Enter new name"
+				m.state = renameItemState
 
-				return b, textinput.Blink
+				return m, textinput.Blink
 			}
 		case key.Matches(msg, toggleHiddenKey):
-			if !b.input.Focused() {
-				b.showHidden = !b.showHidden
-				cmds = append(cmds, getDirectoryListingCmd(dirfs.CurrentDirectory, b.showHidden, b.showIcons))
+			if !m.input.Focused() {
+				m.showHidden = !m.showHidden
+				cmds = append(cmds, getDirectoryListingCmd(dirfs.CurrentDirectory, m.showHidden, m.showIcons))
 			}
 		case key.Matches(msg, homeShortcutKey):
-			if !b.input.Focused() {
-				cmds = append(cmds, getDirectoryListingCmd(dirfs.HomeDirectory, b.showHidden, b.showIcons))
+			if !m.input.Focused() {
+				cmds = append(cmds, getDirectoryListingCmd(dirfs.HomeDirectory, m.showHidden, m.showIcons))
 			}
 		case key.Matches(msg, rootShortcutKey):
-			if !b.input.Focused() {
-				cmds = append(cmds, getDirectoryListingCmd(dirfs.RootDirectory, b.showHidden, b.showIcons))
+			if !m.input.Focused() {
+				cmds = append(cmds, getDirectoryListingCmd(dirfs.RootDirectory, m.showHidden, m.showIcons))
 			}
 		case key.Matches(msg, copyToClipboardKey):
-			if !b.input.Focused() {
-				selectedItem := b.GetSelectedItem()
+			if !m.input.Focused() {
+				selectedItem := m.GetSelectedItem()
 				cmds = append(cmds, copyToClipboardCmd(selectedItem.fileName))
 			}
 		case key.Matches(msg, escapeKey):
-			b.state = idleState
+			m.state = idleState
 
-			if b.input.Focused() {
-				b.input.Reset()
-				b.input.Blur()
+			if m.input.Focused() {
+				m.input.Reset()
+				m.input.Blur()
 			}
 		case key.Matches(msg, openInEditorKey):
-			if !b.input.Focused() {
-				selectedItem := b.GetSelectedItem()
+			if !m.input.Focused() {
+				selectedItem := m.GetSelectedItem()
 
-				if b.selectionPath == "" && !selectedItem.IsDirectory() {
-					return b, openInEditor(selectedItem.FileName())
+				if m.selectionPath == "" && !selectedItem.IsDirectory() {
+					return m, openInEditor(selectedItem.FileName())
 				}
 
-				return b, tea.Sequentially(
-					writeSelectionPathCmd(b.selectionPath, selectedItem.ShortName()),
+				return m, tea.Sequence(
+					writeSelectionPathCmd(m.selectionPath, selectedItem.ShortName()),
 					tea.Quit,
 				)
 			}
 		case key.Matches(msg, submitInputKey):
-			selectedItem := b.GetSelectedItem()
+			selectedItem := m.GetSelectedItem()
 
-			switch b.state {
+			switch m.state {
 			case idleState, deleteItemState, moveItemState:
-				return b, nil
+				return m, nil
 			case createFileState:
-				statusCmd := b.list.NewStatusMessage(
+				statusCmd := m.list.NewStatusMessage(
 					statusMessageInfoStyle("Successfully created file"),
 				)
 
-				cmds = append(cmds, statusCmd, tea.Sequentially(
-					createFileCmd(b.input.Value()),
-					getDirectoryListingCmd(dirfs.CurrentDirectory, b.showHidden, b.showIcons),
+				cmds = append(cmds, statusCmd, tea.Sequence(
+					createFileCmd(m.input.Value()),
+					getDirectoryListingCmd(dirfs.CurrentDirectory, m.showHidden, m.showIcons),
 				))
 			case createDirectoryState:
-				statusCmd := b.list.NewStatusMessage(
+				statusCmd := m.list.NewStatusMessage(
 					statusMessageInfoStyle("Successfully created directory"),
 				)
 
-				cmds = append(cmds, statusCmd, tea.Sequentially(
-					createDirectoryCmd(b.input.Value()),
-					getDirectoryListingCmd(dirfs.CurrentDirectory, b.showHidden, b.showIcons),
+				cmds = append(cmds, statusCmd, tea.Sequence(
+					createDirectoryCmd(m.input.Value()),
+					getDirectoryListingCmd(dirfs.CurrentDirectory, m.showHidden, m.showIcons),
 				))
 			case renameItemState:
-				statusCmd := b.list.NewStatusMessage(
+				statusCmd := m.list.NewStatusMessage(
 					statusMessageInfoStyle("Successfully renamed"),
 				)
 
-				cmds = append(cmds, statusCmd, tea.Sequentially(
-					renameItemCmd(selectedItem.fileName, b.input.Value()),
-					getDirectoryListingCmd(dirfs.CurrentDirectory, b.showHidden, b.showIcons),
+				cmds = append(cmds, statusCmd, tea.Sequence(
+					renameItemCmd(selectedItem.fileName, m.input.Value()),
+					getDirectoryListingCmd(dirfs.CurrentDirectory, m.showHidden, m.showIcons),
 				))
 			}
 
-			b.state = idleState
-			b.input.Blur()
-			b.input.Reset()
+			m.state = idleState
+			m.input.Blur()
+			m.input.Reset()
 		}
 	}
 
-	if b.active {
-		switch b.state {
+	if m.active {
+		switch m.state {
 		case idleState, moveItemState:
-			b.list, cmd = b.list.Update(msg)
+			m.list, cmd = m.list.Update(msg)
 			cmds = append(cmds, cmd)
 		case createFileState, createDirectoryState, renameItemState:
-			b.input, cmd = b.input.Update(msg)
+			m.input, cmd = m.input.Update(msg)
 			cmds = append(cmds, cmd)
 		case deleteItemState:
-			return b, nil
+			return m, nil
 		}
 	}
 
-	return b, tea.Batch(cmds...)
+	return m, tea.Batch(cmds...)
 }

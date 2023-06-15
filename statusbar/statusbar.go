@@ -17,8 +17,8 @@ type ColorConfig struct {
 	Background lipgloss.AdaptiveColor
 }
 
-// Bubble represents the properties of the statusbar.
-type Bubble struct {
+// Model represents the properties of the statusbar.
+type Model struct {
 	Width              int
 	Height             int
 	FirstColumn        string
@@ -32,8 +32,8 @@ type Bubble struct {
 }
 
 // New creates a new instance of the statusbar.
-func New(firstColumnColors, secondColumnColors, thirdColumnColors, fourthColumnColors ColorConfig) Bubble {
-	return Bubble{
+func New(firstColumnColors, secondColumnColors, thirdColumnColors, fourthColumnColors ColorConfig) Model {
+	return Model{
 		FirstColumnColors:  firstColumnColors,
 		SecondColumnColors: secondColumnColors,
 		ThirdColumnColors:  thirdColumnColors,
@@ -42,71 +42,71 @@ func New(firstColumnColors, secondColumnColors, thirdColumnColors, fourthColumnC
 }
 
 // SetSize sets the width of the statusbar.
-func (b *Bubble) SetSize(width int) {
-	b.Width = width
+func (m *Model) SetSize(width int) {
+	m.Width = width
 }
 
 // Update updates the size of the statusbar.
-func (b Bubble) Update(msg tea.Msg) (Bubble, tea.Cmd) {
+func (m Model) Update(msg tea.Msg) (Model, tea.Cmd) {
 	switch msg := msg.(type) {
 	case tea.WindowSizeMsg:
-		b.SetSize(msg.Width)
+		m.SetSize(msg.Width)
 	}
 
-	return b, nil
+	return m, nil
 }
 
 // SetContent sets the content of the statusbar.
-func (b *Bubble) SetContent(firstColumn, secondColumn, thirdColumn, fourthColumn string) {
-	b.FirstColumn = firstColumn
-	b.SecondColumn = secondColumn
-	b.ThirdColumn = thirdColumn
-	b.FourthColumn = fourthColumn
+func (m *Model) SetContent(firstColumn, secondColumn, thirdColumn, fourthColumn string) {
+	m.FirstColumn = firstColumn
+	m.SecondColumn = secondColumn
+	m.ThirdColumn = thirdColumn
+	m.FourthColumn = fourthColumn
 }
 
 // SetColors sets the colors of the 4 columns.
-func (b *Bubble) SetColors(firstColumnColors, secondColumnColors, thirdColumnColors, fourthColumnColors ColorConfig) {
-	b.FirstColumnColors = firstColumnColors
-	b.SecondColumnColors = secondColumnColors
-	b.ThirdColumnColors = thirdColumnColors
-	b.FourthColumnColors = fourthColumnColors
+func (m *Model) SetColors(firstColumnColors, secondColumnColors, thirdColumnColors, fourthColumnColors ColorConfig) {
+	m.FirstColumnColors = firstColumnColors
+	m.SecondColumnColors = secondColumnColors
+	m.ThirdColumnColors = thirdColumnColors
+	m.FourthColumnColors = fourthColumnColors
 }
 
 // View returns a string representation of a statusbar.
-func (b Bubble) View() string {
+func (m Model) View() string {
 	width := lipgloss.Width
 
 	firstColumn := lipgloss.NewStyle().
-		Foreground(b.FirstColumnColors.Foreground).
-		Background(b.FirstColumnColors.Background).
+		Foreground(m.FirstColumnColors.Foreground).
+		Background(m.FirstColumnColors.Background).
 		Padding(0, 1).
 		Height(Height).
-		Render(truncate.StringWithTail(b.FirstColumn, 30, "..."))
+		Render(truncate.StringWithTail(m.FirstColumn, 30, "..."))
 
 	thirdColumn := lipgloss.NewStyle().
-		Foreground(b.ThirdColumnColors.Foreground).
-		Background(b.ThirdColumnColors.Background).
+		Foreground(m.ThirdColumnColors.Foreground).
+		Background(m.ThirdColumnColors.Background).
 		Align(lipgloss.Right).
 		Padding(0, 1).
 		Height(Height).
-		Render(b.ThirdColumn)
+		Render(m.ThirdColumn)
 
 	fourthColumn := lipgloss.NewStyle().
-		Foreground(b.FourthColumnColors.Foreground).
-		Background(b.FourthColumnColors.Background).
+		Foreground(m.FourthColumnColors.Foreground).
+		Background(m.FourthColumnColors.Background).
 		Padding(0, 1).
 		Height(Height).
-		Render(b.FourthColumn)
+		Render(m.FourthColumn)
 
 	secondColumn := lipgloss.NewStyle().
-		Foreground(b.SecondColumnColors.Foreground).
-		Background(b.SecondColumnColors.Background).
+		Foreground(m.SecondColumnColors.Foreground).
+		Background(m.SecondColumnColors.Background).
 		Padding(0, 1).
 		Height(Height).
-		Width(b.Width - width(firstColumn) - width(thirdColumn) - width(fourthColumn)).
+		Width(m.Width - width(firstColumn) - width(thirdColumn) - width(fourthColumn)).
 		Render(truncate.StringWithTail(
-			b.SecondColumn,
-			uint(b.Width-width(firstColumn)-width(thirdColumn)-width(fourthColumn)-3),
+			m.SecondColumn,
+			uint(m.Width-width(firstColumn)-width(thirdColumn)-width(fourthColumn)-3),
 			"..."),
 		)
 

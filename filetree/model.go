@@ -24,7 +24,7 @@ type itemToMove struct {
 }
 
 // Bubble represents the properties of a filetree.
-type Bubble struct {
+type Model struct {
 	state         sessionState
 	list          list.Model
 	input         textinput.Model
@@ -44,7 +44,7 @@ func New(
 	active, borderless bool,
 	startDir, selectionPath string,
 	borderColor, selectedItemColor, titleBackgroundColor, titleForegroundColor lipgloss.AdaptiveColor,
-) Bubble {
+) Model {
 	listDelegate := list.NewDefaultDelegate()
 	listDelegate.Styles.SelectedTitle = listDelegate.Styles.SelectedTitle.Copy().
 		Foreground(selectedItemColor).
@@ -98,7 +98,7 @@ func New(
 		}
 	}
 
-	input := textinput.NewModel()
+	input := textinput.New()
 	input.Prompt = "❯ "
 	input.Placeholder = "Enter file name"
 	input.CharLimit = 250
@@ -110,7 +110,7 @@ func New(
 		bubbleStyle = bubbleStyle.Copy().BorderForeground(borderColor)
 	}
 
-	return Bubble{
+	return Model{
 		list:          listModel,
 		input:         input,
 		showHidden:    true,

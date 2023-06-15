@@ -46,24 +46,24 @@ func ConvertBytesToSizeString(size int64) string {
 }
 
 // SetSize sets the size of the filetree.
-func (b *Bubble) SetSize(width, height int) {
+func (m *Model) SetSize(width, height int) {
 	horizontal, vertical := bubbleStyle.GetFrameSize()
 
-	b.list.Styles.StatusBar.Width(width - horizontal)
-	b.list.SetSize(
+	m.list.Styles.StatusBar.Width(width - horizontal)
+	m.list.SetSize(
 		width-horizontal-vertical,
-		height-vertical-lipgloss.Height(b.input.View())-inputStyle.GetVerticalPadding(),
+		height-vertical-lipgloss.Height(m.input.View())-inputStyle.GetVerticalPadding(),
 	)
 }
 
 // SetBorderColor sets the color of the border.
-func (b *Bubble) SetBorderColor(color lipgloss.AdaptiveColor) {
+func (m *Model) SetBorderColor(color lipgloss.AdaptiveColor) {
 	bubbleStyle = bubbleStyle.Copy().BorderForeground(color)
 }
 
 // GetSelectedItem returns the currently selected item in the tree.
-func (b Bubble) GetSelectedItem() Item {
-	selectedDir, ok := b.list.SelectedItem().(Item)
+func (m Model) GetSelectedItem() Item {
+	selectedDir, ok := m.list.SelectedItem().(Item)
 	if ok {
 		return selectedDir
 	}
@@ -72,38 +72,38 @@ func (b Bubble) GetSelectedItem() Item {
 }
 
 // Cursor returns the current position of the cursor in the tree.
-func (b Bubble) Cursor() int {
-	return b.list.Index() + 1
+func (m Model) Cursor() int {
+	return m.list.Index() + 1
 }
 
 // TotalItems returns the total number of items in the tree.
-func (b Bubble) TotalItems() int {
-	return len(b.list.Items())
+func (m Model) TotalItems() int {
+	return len(m.list.Items())
 }
 
 // SetIsActive sets if the bubble is currently active.
-func (b *Bubble) SetIsActive(active bool) {
-	b.active = active
+func (m *Model) SetIsActive(active bool) {
+	m.active = active
 }
 
 // IsFiltering returns if the tree is currently being filtered.
-func (b Bubble) IsFiltering() bool {
-	return b.list.FilterState() == list.Filtering
+func (m Model) IsFiltering() bool {
+	return m.list.FilterState() == list.Filtering
 }
 
 // SetStartDir sets a starting directory.
-func (b *Bubble) SetStartDir(dir string) {
-	b.startDir = dir
+func (m *Model) SetStartDir(dir string) {
+	m.startDir = dir
 }
 
 // SetSelectionPath sets the path in which to write to a file when editing.
-func (b *Bubble) SetSelectionPath(path string) {
-	b.selectionPath = path
+func (m *Model) SetSelectionPath(path string) {
+	m.selectionPath = path
 }
 
 // SetTitleColors sets the background and foreground of the title.
-func (b *Bubble) SetTitleColors(foreground, background lipgloss.AdaptiveColor) {
-	b.list.Styles.Title = b.list.Styles.Title.Copy().
+func (m *Model) SetTitleColors(foreground, background lipgloss.AdaptiveColor) {
+	m.list.Styles.Title = m.list.Styles.Title.Copy().
 		Bold(true).
 		Italic(true).
 		Background(background).
@@ -111,17 +111,17 @@ func (b *Bubble) SetTitleColors(foreground, background lipgloss.AdaptiveColor) {
 }
 
 // SetSelectedItemColors sets the foreground of the selected item.
-func (b *Bubble) SetSelectedItemColors(foreground lipgloss.AdaptiveColor) {
-	b.delegate.Styles.SelectedTitle = b.delegate.Styles.SelectedTitle.Copy().
+func (m *Model) SetSelectedItemColors(foreground lipgloss.AdaptiveColor) {
+	m.delegate.Styles.SelectedTitle = m.delegate.Styles.SelectedTitle.Copy().
 		Foreground(foreground).
 		BorderLeftForeground(foreground)
-	b.delegate.Styles.SelectedDesc = b.delegate.Styles.SelectedTitle.Copy()
+	m.delegate.Styles.SelectedDesc = m.delegate.Styles.SelectedTitle.Copy()
 
-	b.list.SetDelegate(b.delegate)
+	m.list.SetDelegate(m.delegate)
 }
 
 // SetBorderless sets weather or not to show the border.
-func (b *Bubble) SetBorderless(borderless bool) {
+func (m *Model) SetBorderless(borderless bool) {
 	if borderless {
 		bubbleStyle = bubbleStyle.Copy().BorderStyle(lipgloss.HiddenBorder())
 	} else {
@@ -130,13 +130,13 @@ func (b *Bubble) SetBorderless(borderless bool) {
 }
 
 // ToggleShowIcons sets weather or not to show icons.
-func (b *Bubble) ToggleShowIcons(showIcons bool) tea.Cmd {
-	b.showIcons = showIcons
+func (m *Model) ToggleShowIcons(showIcons bool) tea.Cmd {
+	m.showIcons = showIcons
 
-	return getDirectoryListingCmd(dirfs.CurrentDirectory, b.showHidden, b.showIcons)
+	return getDirectoryListingCmd(dirfs.CurrentDirectory, m.showHidden, m.showIcons)
 }
 
 // ToggleHelp sets weather or not to show the help section.
-func (b *Bubble) ToggleHelp(showHelp bool) {
-	b.list.SetShowHelp(showHelp)
+func (m *Model) ToggleHelp(showHelp bool) {
+	m.list.SetShowHelp(showHelp)
 }

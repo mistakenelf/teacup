@@ -8,13 +8,13 @@ import (
 	"github.com/knipferrc/teacup/help"
 )
 
-// Bubble represents the properties of the UI.
-type Bubble struct {
-	help help.Bubble
+// model represents the properties of the UI.
+type model struct {
+	help help.Model
 }
 
 // New create a new instance of the UI.
-func New() Bubble {
+func New() model {
 	helpModel := help.New(
 		true,
 		true,
@@ -49,18 +49,18 @@ func New() Bubble {
 		},
 	)
 
-	return Bubble{
+	return model{
 		help: helpModel,
 	}
 }
 
 // Init initializes the application.
-func (b Bubble) Init() tea.Cmd {
+func (m model) Init() tea.Cmd {
 	return nil
 }
 
 // Update handles all UI interactions.
-func (b Bubble) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
+func (m model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 	var (
 		cmd  tea.Cmd
 		cmds []tea.Cmd
@@ -68,7 +68,7 @@ func (b Bubble) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 
 	switch msg := msg.(type) {
 	case tea.WindowSizeMsg:
-		b.help.SetSize(msg.Width, msg.Height)
+		m.help.SetSize(msg.Width, msg.Height)
 	case tea.KeyMsg:
 		switch msg.String() {
 		case "ctrl+c", "esc", "q":
@@ -76,22 +76,22 @@ func (b Bubble) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 		}
 	}
 
-	b.help, cmd = b.help.Update(msg)
+	m.help, cmd = m.help.Update(msg)
 	cmds = append(cmds, cmd)
 
-	return b, tea.Batch(cmds...)
+	return m, tea.Batch(cmds...)
 }
 
 // View renders the UI.
-func (b Bubble) View() string {
-	return b.help.View()
+func (m model) View() string {
+	return m.help.View()
 }
 
 func main() {
 	b := New()
 	p := tea.NewProgram(b, tea.WithAltScreen())
 
-	if err := p.Start(); err != nil {
+	if _, err := p.Run(); err != nil {
 		log.Fatal(err)
 	}
 }

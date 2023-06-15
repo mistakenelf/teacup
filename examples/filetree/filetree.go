@@ -8,13 +8,12 @@ import (
 	"github.com/knipferrc/teacup/filetree"
 )
 
-// Bubble represents the properties of the UI.
-type Bubble struct {
-	filetree filetree.Bubble
+type model struct {
+	filetree filetree.Model
 }
 
 // New creates a new instance of the UI.
-func New() Bubble {
+func New() model {
 	filetreeModel := filetree.New(
 		true,
 		true,
@@ -26,18 +25,18 @@ func New() Bubble {
 		lipgloss.AdaptiveColor{Light: "#ffffff", Dark: "#ffffff"},
 	)
 
-	return Bubble{
+	return model{
 		filetree: filetreeModel,
 	}
 }
 
 // Init intializes the UI.
-func (b Bubble) Init() tea.Cmd {
-	return b.filetree.Init()
+func (m model) Init() tea.Cmd {
+	return m.filetree.Init()
 }
 
 // Update handles all UI interactions.
-func (b Bubble) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
+func (m model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 	var (
 		cmd  tea.Cmd
 		cmds []tea.Cmd
@@ -45,7 +44,7 @@ func (b Bubble) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 
 	switch msg := msg.(type) {
 	case tea.WindowSizeMsg:
-		b.filetree.SetSize(msg.Width, msg.Height)
+		m.filetree.SetSize(msg.Width, msg.Height)
 	case tea.KeyMsg:
 		switch msg.String() {
 		case "ctrl+c":
@@ -53,22 +52,22 @@ func (b Bubble) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 		}
 	}
 
-	b.filetree, cmd = b.filetree.Update(msg)
+	m.filetree, cmd = m.filetree.Update(msg)
 	cmds = append(cmds, cmd)
 
-	return b, tea.Batch(cmds...)
+	return m, tea.Batch(cmds...)
 }
 
 // View returns a string representation of the UI.
-func (b Bubble) View() string {
-	return b.filetree.View()
+func (m model) View() string {
+	return m.filetree.View()
 }
 
 func main() {
 	b := New()
 	p := tea.NewProgram(b, tea.WithAltScreen())
 
-	if err := p.Start(); err != nil {
+	if _, err := p.Run(); err != nil {
 		log.Fatal(err)
 	}
 }

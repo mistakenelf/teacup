@@ -26,8 +26,8 @@ type Entry struct {
 	Description string
 }
 
-// Bubble represents the properties of a help bubble.
-type Bubble struct {
+// Model represents the properties of a help bubble.
+type Model struct {
 	Viewport    viewport.Model
 	Entries     []Entry
 	BorderColor lipgloss.AdaptiveColor
@@ -85,7 +85,7 @@ func New(
 	titleColor TitleColor,
 	borderColor lipgloss.AdaptiveColor,
 	entries []Entry,
-) Bubble {
+) Model {
 	viewPort := viewport.New(0, 0)
 	border := lipgloss.NormalBorder()
 
@@ -101,7 +101,7 @@ func New(
 
 	viewPort.SetContent(generateHelpScreen(title, titleColor, entries, 0, 0))
 
-	return Bubble{
+	return Model{
 		Viewport:    viewPort,
 		Entries:     entries,
 		Title:       title,
@@ -113,68 +113,68 @@ func New(
 }
 
 // SetSize sets the size of the help bubble.
-func (b *Bubble) SetSize(w, h int) {
-	b.Viewport.Width = w - b.Viewport.Style.GetHorizontalFrameSize()
-	b.Viewport.Height = h - b.Viewport.Style.GetVerticalFrameSize()
+func (m *Model) SetSize(w, h int) {
+	m.Viewport.Width = w
+	m.Viewport.Height = h
 
-	b.Viewport.SetContent(generateHelpScreen(b.Title, b.TitleColor, b.Entries, b.Viewport.Width, b.Viewport.Height))
+	m.Viewport.SetContent(generateHelpScreen(m.Title, m.TitleColor, m.Entries, m.Viewport.Width, m.Viewport.Height))
 }
 
 // SetBorderColor sets the current color of the border.
-func (b *Bubble) SetBorderColor(color lipgloss.AdaptiveColor) {
-	b.BorderColor = color
+func (m *Model) SetBorderColor(color lipgloss.AdaptiveColor) {
+	m.BorderColor = color
 }
 
 // SetIsActive sets if the bubble is currently active.
-func (b *Bubble) SetIsActive(active bool) {
-	b.Active = active
+func (m *Model) SetIsActive(active bool) {
+	m.Active = active
 }
 
 // GotoTop jumps to the top of the viewport.
-func (b *Bubble) GotoTop() {
-	b.Viewport.GotoTop()
+func (m *Model) GotoTop() {
+	m.Viewport.GotoTop()
 }
 
 // SetTitleColor sets the color of the title.
-func (b *Bubble) SetTitleColor(color TitleColor) {
-	b.TitleColor = color
+func (m *Model) SetTitleColor(color TitleColor) {
+	m.TitleColor = color
 
-	b.Viewport.SetContent(generateHelpScreen(b.Title, b.TitleColor, b.Entries, b.Viewport.Width, b.Viewport.Height))
+	m.Viewport.SetContent(generateHelpScreen(m.Title, m.TitleColor, m.Entries, m.Viewport.Width, m.Viewport.Height))
 }
 
 // SetBorderless sets weather or not to show the border.
-func (b *Bubble) SetBorderless(borderless bool) {
-	b.Borderless = borderless
+func (m *Model) SetBorderless(borderless bool) {
+	m.Borderless = borderless
 }
 
 // Update handles UI interactions with the help bubble.
-func (b Bubble) Update(msg tea.Msg) (Bubble, tea.Cmd) {
+func (m Model) Update(msg tea.Msg) (Model, tea.Cmd) {
 	var (
 		cmd  tea.Cmd
 		cmds []tea.Cmd
 	)
 
-	if b.Active {
-		b.Viewport, cmd = b.Viewport.Update(msg)
+	if m.Active {
+		m.Viewport, cmd = m.Viewport.Update(msg)
 		cmds = append(cmds, cmd)
 	}
 
-	return b, tea.Batch(cmds...)
+	return m, tea.Batch(cmds...)
 }
 
 // View returns a string representation of the help bubble.
-func (b Bubble) View() string {
+func (m Model) View() string {
 	border := lipgloss.NormalBorder()
 
-	if b.Borderless {
+	if m.Borderless {
 		border = lipgloss.HiddenBorder()
 	}
 
-	b.Viewport.Style = lipgloss.NewStyle().
+	m.Viewport.Style = lipgloss.NewStyle().
 		PaddingLeft(padding).
 		PaddingRight(padding).
 		Border(border).
-		BorderForeground(b.BorderColor)
+		BorderForeground(m.BorderColor)
 
-	return b.Viewport.View()
+	return m.Viewport.View()
 }

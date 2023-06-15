@@ -9,18 +9,18 @@ import (
 )
 
 // View returns a string representation of a filetree.
-func (b Bubble) View() string {
+func (m Model) View() string {
 	var inputView string
 
-	switch b.state {
+	switch m.state {
 	case idleState:
 		inputView = ""
 	case createFileState, createDirectoryState, renameItemState:
-		inputView = b.input.View()
+		inputView = m.input.View()
 	case deleteItemState:
 		inputView = "Are you sure you want to delete? (y/n)"
 	case moveItemState:
-		inputView = fmt.Sprintf("Currently moving %s", b.itemToMove.shortName)
+		inputView = fmt.Sprintf("Currently moving %s", m.itemToMove.shortName)
 	default:
 		inputView = ""
 	}
@@ -28,7 +28,7 @@ func (b Bubble) View() string {
 	return bubbleStyle.Render(
 		lipgloss.JoinVertical(
 			lipgloss.Top,
-			b.list.View(),
+			m.list.View(),
 			inputStyle.Render(inputView),
 		))
 }

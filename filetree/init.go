@@ -7,16 +7,16 @@ import (
 )
 
 // Init initializes the filetree with files from the current directory.
-func (b Bubble) Init() tea.Cmd {
+func (m Model) Init() tea.Cmd {
 	var (
 		cmd  tea.Cmd
 		cmds []tea.Cmd
 	)
 
-	if b.startDir == "" {
-		cmd = getDirectoryListingCmd(dirfs.CurrentDirectory, b.showHidden, b.showIcons)
+	if m.startDir == "" {
+		cmd = getDirectoryListingCmd(dirfs.CurrentDirectory, m.showHidden, m.showIcons)
 	} else {
-		cmd = getDirectoryListingCmd(b.startDir, b.showHidden, b.showIcons)
+		cmd = getDirectoryListingCmd(m.startDir, m.showHidden, m.showIcons)
 	}
 
 	cmds = append(cmds, cmd, textinput.Blink)

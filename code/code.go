@@ -48,8 +48,8 @@ func readFileContentCmd(fileName, syntaxTheme string) tea.Cmd {
 	}
 }
 
-// Bubble represents the properties of a code bubble.
-type Bubble struct {
+// Model represents the properties of a code bubble.
+type Model struct {
 	Viewport           viewport.Model
 	BorderColor        lipgloss.AdaptiveColor
 	Borderless         bool
@@ -60,7 +60,7 @@ type Bubble struct {
 }
 
 // New creates a new instance of code.
-func New(active, borderless bool, borderColor lipgloss.AdaptiveColor) Bubble {
+func New(active, borderless bool, borderColor lipgloss.AdaptiveColor) Model {
 	viewPort := viewport.New(0, 0)
 	border := lipgloss.NormalBorder()
 
@@ -74,7 +74,7 @@ func New(active, borderless bool, borderColor lipgloss.AdaptiveColor) Bubble {
 		Border(border).
 		BorderForeground(borderColor)
 
-	return Bubble{
+	return Model{
 		Viewport:    viewPort,
 		Borderless:  borderless,
 		Active:      active,
@@ -84,55 +84,55 @@ func New(active, borderless bool, borderColor lipgloss.AdaptiveColor) Bubble {
 }
 
 // Init initializes the code bubble.
-func (b Bubble) Init() tea.Cmd {
+func (m Model) Init() tea.Cmd {
 	return nil
 }
 
 // SetFileName sets current file to highlight.
-func (b *Bubble) SetFileName(filename string) tea.Cmd {
-	b.Filename = filename
+func (m *Model) SetFileName(filename string) tea.Cmd {
+	m.Filename = filename
 
-	return readFileContentCmd(filename, b.SyntaxTheme)
+	return readFileContentCmd(filename, m.SyntaxTheme)
 }
 
 // SetIsActive sets if the bubble is currently active.
-func (b *Bubble) SetIsActive(active bool) {
-	b.Active = active
+func (m *Model) SetIsActive(active bool) {
+	m.Active = active
 }
 
 // SetBorderColor sets the current color of the border.
-func (b *Bubble) SetBorderColor(color lipgloss.AdaptiveColor) {
-	b.BorderColor = color
+func (m *Model) SetBorderColor(color lipgloss.AdaptiveColor) {
+	m.BorderColor = color
 }
 
 // SetSyntaxTheme sets the syntax theme of the rendered code.
-func (b *Bubble) SetSyntaxTheme(theme string) {
-	b.SyntaxTheme = theme
+func (m *Model) SetSyntaxTheme(theme string) {
+	m.SyntaxTheme = theme
 }
 
 // SetBorderless sets weather or not to show the border.
-func (b *Bubble) SetBorderless(borderless bool) {
-	b.Borderless = borderless
+func (m *Model) SetBorderless(borderless bool) {
+	m.Borderless = borderless
 }
 
 // SetSize sets the size of the bubble.
-func (b *Bubble) SetSize(w, h int) {
-	b.Viewport.Width = w - b.Viewport.Style.GetHorizontalFrameSize()
-	b.Viewport.Height = h - b.Viewport.Style.GetVerticalFrameSize()
+func (m *Model) SetSize(w, h int) {
+	m.Viewport.Width = w
+	m.Viewport.Height = h
 
-	b.Viewport.SetContent(lipgloss.NewStyle().
-		Width(b.Viewport.Width).
-		Height(b.Viewport.Height).
-		Render(b.HighlightedContent))
+	m.Viewport.SetContent(lipgloss.NewStyle().
+		Width(m.Viewport.Width).
+		Height(m.Viewport.Height).
+		Render(m.HighlightedContent))
 }
 
 // GotoTop jumps to the top of the viewport.
-func (b *Bubble) GotoTop() {
-	b.Viewport.GotoTop()
+func (m *Model) GotoTop() {
+	m.Viewport.GotoTop()
 }
 
 // Update handles updating the UI of a code bubble.
-func (b Bubble) Update(msg tea.Msg) (Bubble, tea.Cmd) {
+func (m Model) Update(msg tea.Msg) (Model, tea.Cmd) {
 	var (
 		cmd  tea.Cmd
 		cmds []tea.Cmd
@@ -140,48 +140,48 @@ func (b Bubble) Update(msg tea.Msg) (Bubble, tea.Cmd) {
 
 	switch msg := msg.(type) {
 	case syntaxMsg:
-		b.Filename = ""
-		b.HighlightedContent = lipgloss.NewStyle().
-			Width(b.Viewport.Width).
-			Height(b.Viewport.Height).
+		m.Filename = ""
+		m.HighlightedContent = lipgloss.NewStyle().
+			Width(m.Viewport.Width).
+			Height(m.Viewport.Height).
 			Render(string(msg))
 
-		b.Viewport.SetContent(b.HighlightedContent)
+		m.Viewport.SetContent(m.HighlightedContent)
 
-		return b, nil
+		return m, nil
 	case errorMsg:
-		b.Filename = ""
-		b.HighlightedContent = lipgloss.NewStyle().
-			Width(b.Viewport.Width).
-			Height(b.Viewport.Height).
+		m.Filename = ""
+		m.HighlightedContent = lipgloss.NewStyle().
+			Width(m.Viewport.Width).
+			Height(m.Viewport.Height).
 			Render("Error: " + msg.Error())
 
-		b.Viewport.SetContent(b.HighlightedContent)
+		m.Viewport.SetContent(m.HighlightedContent)
 
-		return b, nil
+		return m, nil
 	}
 
-	if b.Active {
-		b.Viewport, cmd = b.Viewport.Update(msg)
+	if m.Active {
+		m.Viewport, cmd = m.Viewport.Update(msg)
 		cmds = append(cmds, cmd)
 	}
 
-	return b, tea.Batch(cmds...)
+	return m, tea.Batch(cmds...)
 }
 
 // View returns a string representation of the code bubble.
-func (b Bubble) View() string {
+func (m Model) View() string {
 	border := lipgloss.NormalBorder()
 
-	if b.Borderless {
+	if m.Borderless {
 		border = lipgloss.HiddenBorder()
 	}
 
-	b.Viewport.Style = lipgloss.NewStyle().
+	m.Viewport.Style = lipgloss.NewStyle().
 		PaddingLeft(padding).
 		PaddingRight(padding).
 		Border(border).
-		BorderForeground(b.BorderColor)
+		BorderForeground(m.BorderColor)
 
-	return b.Viewport.View()
+	return m.Viewport.View()
 }

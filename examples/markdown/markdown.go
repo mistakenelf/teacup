@@ -8,28 +8,28 @@ import (
 	"github.com/knipferrc/teacup/markdown"
 )
 
-// Bubble represents the properties of the UI.
-type Bubble struct {
-	markdown markdown.Bubble
+// model represents the properties of the UI.
+type model struct {
+	markdown markdown.Model
 }
 
 // New creates a new instance of the UI.
-func New() Bubble {
+func New() model {
 	markdownModel := markdown.New(true, true, lipgloss.AdaptiveColor{Light: "#000000", Dark: "#ffffff"})
 	markdownModel.FileName = "README.md"
 
-	return Bubble{
+	return model{
 		markdown: markdownModel,
 	}
 }
 
 // Init intializes the UI.
-func (b Bubble) Init() tea.Cmd {
+func (m model) Init() tea.Cmd {
 	return nil
 }
 
 // Update handles all UI interactions.
-func (b Bubble) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
+func (m model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 	var (
 		cmd  tea.Cmd
 		cmds []tea.Cmd
@@ -37,9 +37,9 @@ func (b Bubble) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 
 	switch msg := msg.(type) {
 	case tea.WindowSizeMsg:
-		cmds = append(cmds, b.markdown.SetSize(msg.Width, msg.Height))
+		cmds = append(cmds, m.markdown.SetSize(msg.Width, msg.Height))
 
-		return b, tea.Batch(cmds...)
+		return m, tea.Batch(cmds...)
 	case tea.KeyMsg:
 		switch msg.String() {
 		case "ctrl+c", "esc", "q":
@@ -47,22 +47,22 @@ func (b Bubble) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 		}
 	}
 
-	b.markdown, cmd = b.markdown.Update(msg)
+	m.markdown, cmd = m.markdown.Update(msg)
 	cmds = append(cmds, cmd)
 
-	return b, tea.Batch(cmds...)
+	return m, tea.Batch(cmds...)
 }
 
 // View returns a string representation of the UI.
-func (b Bubble) View() string {
-	return b.markdown.View()
+func (m model) View() string {
+	return m.markdown.View()
 }
 
 func main() {
 	b := New()
 	p := tea.NewProgram(b, tea.WithAltScreen())
 
-	if err := p.Start(); err != nil {
+	if _, err := p.Run(); err != nil {
 		log.Fatal(err)
 	}
 }
