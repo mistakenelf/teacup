@@ -9,7 +9,7 @@ import (
 	"github.com/atotto/clipboard"
 	"github.com/charmbracelet/bubbles/list"
 	tea "github.com/charmbracelet/bubbletea"
-	"github.com/knipferrc/teacup/dirfs"
+	"github.com/mistakenelf/teacup/dirfs"
 )
 
 type getDirectoryListingMsg []list.Item

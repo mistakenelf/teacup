@@ -3,7 +3,7 @@ package filetree
 import (
 	"github.com/charmbracelet/bubbles/textinput"
 	tea "github.com/charmbracelet/bubbletea"
-	"github.com/knipferrc/teacup/dirfs"
+	"github.com/mistakenelf/teacup/dirfs"
 )
 
 // Init initializes the filetree with files from the current directory.

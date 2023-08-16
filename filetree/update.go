@@ -4,7 +4,7 @@ import (
 	"github.com/charmbracelet/bubbles/key"
 	"github.com/charmbracelet/bubbles/textinput"
 	tea "github.com/charmbracelet/bubbletea"
-	"github.com/knipferrc/teacup/dirfs"
+	"github.com/mistakenelf/teacup/dirfs"
 )
 
 const (

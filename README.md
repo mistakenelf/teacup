@@ -1,9 +1,9 @@
 # teacup
 
-[![Release](https://img.shields.io/github/release/knipferrc/teacup.svg?style=flat-square)](https://github.com/knipferrc/teacup/releases/latest)
+[![Release](https://img.shields.io/github/release/mistakenelf/teacup.svg?style=flat-square)](https://github.com/mistakenelf/teacup/releases/latest)
 [![Software License](https://img.shields.io/badge/license-MIT-brightgreen.svg?style=flat-square)](LICENSE.md)
-[![Go Report Card](https://goreportcard.com/badge/github.com/knipferrc/teacup?style=flat-square)](https://goreportcard.com/report/github.com/knipferrc/teacup)
-[![Godoc](https://godoc.org/github.com/knipferrc/teacup?status.svg&style=flat-square)](http://godoc.org/github.com/knipferrc/teacup)
+[![Go Report Card](https://goreportcard.com/badge/github.com/mistakenelf/teacup?style=flat-square)](https://goreportcard.com/report/github.com/mistakenelf/teacup)
+[![Godoc](https://godoc.org/github.com/mistakenelf/teacup?status.svg&style=flat-square)](http://godoc.org/github.com/mistakenelf/teacup)
 
 ## About The Project
 
@@ -21,7 +21,7 @@ A collection of bubbles and utilities for creating bubbletea applications.
 ### Go
 
 ```
-go get github.com/knipferrc/teacup@latest
+go get github.com/mistakenelf/teacup@latest
 ```
 
 ## Features

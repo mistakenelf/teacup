@@ -5,7 +5,7 @@ import (
 
 	tea "github.com/charmbracelet/bubbletea"
 	"github.com/charmbracelet/lipgloss"
-	"github.com/knipferrc/teacup/code"
+	"github.com/mistakenelf/teacup/code"
 )
 
 // model represents the properties of the UI.
