@@ -98,6 +98,12 @@ func (m *Model) SetIsActive(active bool) {
 	m.Active = active
 }
 
+// SetSize sets the size of the bubble.
+func (m *Model) SetSize(w, h int) {
+	m.Table.SetWidth(w)
+	m.Table.SetHeight(h - headerOffset)
+}
+
 // Update handles updating the UI of a code bubble.
 func (m Model) Update(msg tea.Msg) (Model, tea.Cmd) {
 	var (
@@ -106,9 +112,6 @@ func (m Model) Update(msg tea.Msg) (Model, tea.Cmd) {
 	)
 
 	switch msg := msg.(type) {
-	case tea.WindowSizeMsg:
-		m.Table.SetHeight(msg.Height - headerOffset)
-		m.Table.SetWidth(msg.Width)
 	case renderCSVMsg:
 		var columns []table.Column
 		var rows []table.Row
@@ -139,10 +142,8 @@ func (m Model) Update(msg tea.Msg) (Model, tea.Cmd) {
 		return m, nil
 	}
 
-	if m.Active {
-		m.Table, cmd = m.Table.Update(msg)
-		cmds = append(cmds, cmd)
-	}
+	m.Table, cmd = m.Table.Update(msg)
+	cmds = append(cmds, cmd)
 
 	return m, tea.Batch(cmds...)
 }
