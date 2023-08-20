@@ -22,6 +22,10 @@ example-pdf:
 example-statusbar:
 	@go run ./examples/statusbar/statusbar.go
 
-.PHONY: example-iamge
+.PHONY: example-image
 example-image:
 	@go run ./examples/image/image.go
+
+.PHONY: example-csv
+example-csv:
+	@go run ./examples/csv/csv.go
