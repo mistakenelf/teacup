@@ -17,13 +17,11 @@ type model struct {
 func New() model {
 	helpModel := help.New(
 		true,
-		true,
 		"Help",
 		help.TitleColor{
 			Background: lipgloss.AdaptiveColor{Light: "62", Dark: "62"},
 			Foreground: lipgloss.AdaptiveColor{Light: "#ffffff", Dark: "#ffffffs"},
 		},
-		lipgloss.AdaptiveColor{Light: "#000000", Dark: "#ffffff"},
 		[]help.Entry{
 			{Key: "ctrl+c", Description: "Exit FM"},
 			{Key: "j/up", Description: "Move up"},

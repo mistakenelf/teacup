@@ -15,18 +15,11 @@ import (
 type renderMarkdownMsg string
 type errorMsg error
 
-const (
-	padding = 1
-)
-
 // Model represents the properties of a code bubble.
 type Model struct {
-	Viewport    viewport.Model
-	BorderColor lipgloss.AdaptiveColor
-	Active      bool
-	Borderless  bool
-	FileName    string
-	ImageString string
+	Viewport viewport.Model
+	Active   bool
+	FileName string
 }
 
 // RenderMarkdown renders the markdown content with glamour.
@@ -68,25 +61,12 @@ func renderMarkdownCmd(width int, filename string) tea.Cmd {
 }
 
 // New creates a new instance of markdown.
-func New(active, borderless bool, borderColor lipgloss.AdaptiveColor) Model {
+func New(active bool) Model {
 	viewPort := viewport.New(0, 0)
-	border := lipgloss.NormalBorder()
-
-	if borderless {
-		border = lipgloss.HiddenBorder()
-	}
-
-	viewPort.Style = lipgloss.NewStyle().
-		PaddingLeft(padding).
-		PaddingRight(padding).
-		Border(border).
-		BorderForeground(borderColor)
 
 	return Model{
-		Viewport:    viewPort,
-		Active:      active,
-		Borderless:  borderless,
-		BorderColor: borderColor,
+		Viewport: viewPort,
+		Active:   active,
 	}
 }
 
@@ -103,38 +83,16 @@ func (m *Model) SetFileName(filename string) tea.Cmd {
 	return renderMarkdownCmd(m.Viewport.Width, filename)
 }
 
-// SetBorderColor sets the current color of the border.
-func (m *Model) SetBorderColor(color lipgloss.AdaptiveColor) {
-	m.BorderColor = color
-}
-
 // SetSize sets the size of the bubble.
 func (m *Model) SetSize(w, h int) tea.Cmd {
 	m.Viewport.Width = w
 	m.Viewport.Height = h
-
-	border := lipgloss.NormalBorder()
-
-	if m.Borderless {
-		border = lipgloss.HiddenBorder()
-	}
-
-	m.Viewport.Style = lipgloss.NewStyle().
-		PaddingLeft(padding).
-		PaddingRight(padding).
-		Border(border).
-		BorderForeground(m.BorderColor)
 
 	if m.FileName != "" {
 		return renderMarkdownCmd(m.Viewport.Width, m.FileName)
 	}
 
 	return nil
-}
-
-// SetBorderless sets weather or not to show the border.
-func (m *Model) SetBorderless(borderless bool) {
-	m.Borderless = borderless
 }
 
 // GotoTop jumps to the top of the viewport.
@@ -181,17 +139,5 @@ func (m Model) Update(msg tea.Msg) (Model, tea.Cmd) {
 
 // View returns a string representation of the markdown bubble.
 func (m Model) View() string {
-	border := lipgloss.NormalBorder()
-
-	if m.Borderless {
-		border = lipgloss.HiddenBorder()
-	}
-
-	m.Viewport.Style = lipgloss.NewStyle().
-		PaddingLeft(padding).
-		PaddingRight(padding).
-		Border(border).
-		BorderForeground(m.BorderColor)
-
 	return m.Viewport.View()
 }

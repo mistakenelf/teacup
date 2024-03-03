@@ -15,21 +15,15 @@ import (
 type renderPDFMsg string
 type errorMsg error
 
-const (
-	padding = 1
-)
-
 // Model represents the properties of a pdf bubble.
 type Model struct {
-	Viewport    viewport.Model
-	BorderColor lipgloss.AdaptiveColor
-	Active      bool
-	Borderless  bool
-	FileName    string
+	Viewport viewport.Model
+	Active   bool
+	FileName string
 }
 
-// ReadPdf reads a PDF file given a name.
-func ReadPdf(name string) (string, error) {
+// readPdf reads a PDF file given a name.
+func readPdf(name string) (string, error) {
 	file, reader, err := pdf.Open(name)
 	if err != nil {
 		return "", errors.Unwrap(err)
@@ -59,7 +53,7 @@ func ReadPdf(name string) (string, error) {
 // renderPDFCmd reads the content of a PDF and returns its content as a string.
 func renderPDFCmd(filename string) tea.Cmd {
 	return func() tea.Msg {
-		pdfContent, err := ReadPdf(filename)
+		pdfContent, err := readPdf(filename)
 		if err != nil {
 			return errorMsg(err)
 		}
@@ -69,30 +63,13 @@ func renderPDFCmd(filename string) tea.Cmd {
 }
 
 // New creates a new instance of a PDF.
-func New(active, borderless bool, borderColor lipgloss.AdaptiveColor) Model {
+func New(active bool) Model {
 	viewPort := viewport.New(0, 0)
-	border := lipgloss.NormalBorder()
-
-	if borderless {
-		border = lipgloss.HiddenBorder()
-	}
-
-	viewPort.Style = lipgloss.NewStyle().
-		PaddingLeft(padding).
-		PaddingRight(padding).
-		Border(border).
-		BorderForeground(borderColor)
 
 	return Model{
-		Viewport:    viewPort,
-		Borderless:  borderless,
-		BorderColor: borderColor,
+		Viewport: viewPort,
+		Active:   active,
 	}
-}
-
-// SetBorderless sets weather or not to show the border.
-func (m *Model) SetBorderless(borderless bool) {
-	m.Borderless = borderless
 }
 
 // Init initializes the PDF bubble.
@@ -108,27 +85,10 @@ func (m *Model) SetFileName(filename string) tea.Cmd {
 	return renderPDFCmd(filename)
 }
 
-// SetBorderColor sets the current color of the border.
-func (m *Model) SetBorderColor(color lipgloss.AdaptiveColor) {
-	m.BorderColor = color
-}
-
 // SetSize sets the size of the bubble.
 func (m *Model) SetSize(w, h int) {
 	m.Viewport.Width = w
 	m.Viewport.Height = h
-
-	border := lipgloss.NormalBorder()
-
-	if m.Borderless {
-		border = lipgloss.HiddenBorder()
-	}
-
-	m.Viewport.Style = lipgloss.NewStyle().
-		PaddingLeft(padding).
-		PaddingRight(padding).
-		Border(border).
-		BorderForeground(m.BorderColor)
 }
 
 // SetIsActive sets if the bubble is currently active.
@@ -175,17 +135,5 @@ func (m Model) Update(msg tea.Msg) (Model, tea.Cmd) {
 
 // View returns a string representation of the markdown bubble.
 func (m Model) View() string {
-	border := lipgloss.NormalBorder()
-
-	if m.Borderless {
-		border = lipgloss.HiddenBorder()
-	}
-
-	m.Viewport.Style = lipgloss.NewStyle().
-		PaddingLeft(padding).
-		PaddingRight(padding).
-		Border(border).
-		BorderForeground(m.BorderColor)
-
 	return m.Viewport.View()
 }

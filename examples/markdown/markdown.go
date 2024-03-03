@@ -4,7 +4,6 @@ import (
 	"log"
 
 	tea "github.com/charmbracelet/bubbletea"
-	"github.com/charmbracelet/lipgloss"
 	"github.com/mistakenelf/teacup/markdown"
 )
 
@@ -15,7 +14,7 @@ type model struct {
 
 // New creates a new instance of the UI.
 func New() model {
-	markdownModel := markdown.New(true, true, lipgloss.AdaptiveColor{Light: "#000000", Dark: "#ffffff"})
+	markdownModel := markdown.New(true)
 	markdownModel.FileName = "README.md"
 
 	return model{

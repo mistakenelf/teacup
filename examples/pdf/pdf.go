@@ -4,7 +4,6 @@ import (
 	"log"
 
 	tea "github.com/charmbracelet/bubbletea"
-	"github.com/charmbracelet/lipgloss"
 	"github.com/mistakenelf/teacup/pdf"
 )
 
@@ -15,7 +14,7 @@ type model struct {
 
 // New creates a new instance of the UI.
 func New() model {
-	pdfModel := pdf.New(true, true, lipgloss.AdaptiveColor{Light: "#000000", Dark: "#ffffff"})
+	pdfModel := pdf.New(true)
 
 	return model{
 		pdf: pdfModel,

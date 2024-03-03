@@ -4,7 +4,6 @@ import (
 	"log"
 
 	tea "github.com/charmbracelet/bubbletea"
-	"github.com/charmbracelet/lipgloss"
 	"github.com/mistakenelf/teacup/code"
 )
 
@@ -15,7 +14,7 @@ type model struct {
 
 // New creates a new instance of the UI.
 func New() model {
-	codeModel := code.New(true, true, lipgloss.AdaptiveColor{Light: "#000000", Dark: "#ffffff"})
+	codeModel := code.New(true)
 
 	return model{
 		code: codeModel,

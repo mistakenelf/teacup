@@ -17,10 +17,6 @@ import (
 type syntaxMsg string
 type errorMsg error
 
-const (
-	padding = 1
-)
-
 // Highlight returns a syntax highlighted string of text.
 func Highlight(content, extension, syntaxTheme string) (string, error) {
 	buf := new(bytes.Buffer)
@@ -51,8 +47,6 @@ func readFileContentCmd(fileName, syntaxTheme string) tea.Cmd {
 // Model represents the properties of a code bubble.
 type Model struct {
 	Viewport           viewport.Model
-	BorderColor        lipgloss.AdaptiveColor
-	Borderless         bool
 	Active             bool
 	Filename           string
 	HighlightedContent string
@@ -60,25 +54,12 @@ type Model struct {
 }
 
 // New creates a new instance of code.
-func New(active, borderless bool, borderColor lipgloss.AdaptiveColor) Model {
+func New(active bool) Model {
 	viewPort := viewport.New(0, 0)
-	border := lipgloss.NormalBorder()
-
-	if borderless {
-		border = lipgloss.HiddenBorder()
-	}
-
-	viewPort.Style = lipgloss.NewStyle().
-		PaddingLeft(padding).
-		PaddingRight(padding).
-		Border(border).
-		BorderForeground(borderColor)
 
 	return Model{
 		Viewport:    viewPort,
-		Borderless:  borderless,
 		Active:      active,
-		BorderColor: borderColor,
 		SyntaxTheme: "dracula",
 	}
 }
@@ -100,30 +81,15 @@ func (m *Model) SetIsActive(active bool) {
 	m.Active = active
 }
 
-// SetBorderColor sets the current color of the border.
-func (m *Model) SetBorderColor(color lipgloss.AdaptiveColor) {
-	m.BorderColor = color
-}
-
 // SetSyntaxTheme sets the syntax theme of the rendered code.
 func (m *Model) SetSyntaxTheme(theme string) {
 	m.SyntaxTheme = theme
-}
-
-// SetBorderless sets weather or not to show the border.
-func (m *Model) SetBorderless(borderless bool) {
-	m.Borderless = borderless
 }
 
 // SetSize sets the size of the bubble.
 func (m *Model) SetSize(w, h int) {
 	m.Viewport.Width = w
 	m.Viewport.Height = h
-
-	m.Viewport.SetContent(lipgloss.NewStyle().
-		Width(m.Viewport.Width).
-		Height(m.Viewport.Height).
-		Render(m.HighlightedContent))
 }
 
 // GotoTop jumps to the top of the viewport.
@@ -171,17 +137,5 @@ func (m Model) Update(msg tea.Msg) (Model, tea.Cmd) {
 
 // View returns a string representation of the code bubble.
 func (m Model) View() string {
-	border := lipgloss.NormalBorder()
-
-	if m.Borderless {
-		border = lipgloss.HiddenBorder()
-	}
-
-	m.Viewport.Style = lipgloss.NewStyle().
-		PaddingLeft(padding).
-		PaddingRight(padding).
-		Border(border).
-		BorderForeground(m.BorderColor)
-
 	return m.Viewport.View()
 }

@@ -18,10 +18,6 @@ import (
 type convertImageToStringMsg string
 type errorMsg error
 
-const (
-	padding = 1
-)
-
 // ToString converts an image to a string representation of an image.
 func ToString(width int, img image.Image) string {
 	img = imaging.Resize(img, width, 0, imaging.Lanczos)
@@ -72,7 +68,6 @@ func convertImageToStringCmd(width int, filename string) tea.Cmd {
 // Model represents the properties of a code bubble.
 type Model struct {
 	Viewport    viewport.Model
-	BorderColor lipgloss.AdaptiveColor
 	Active      bool
 	Borderless  bool
 	FileName    string
@@ -82,23 +77,10 @@ type Model struct {
 // New creates a new instance of code.
 func New(active, borderless bool, borderColor lipgloss.AdaptiveColor) Model {
 	viewPort := viewport.New(0, 0)
-	border := lipgloss.NormalBorder()
-
-	if borderless {
-		border = lipgloss.HiddenBorder()
-	}
-
-	viewPort.Style = lipgloss.NewStyle().
-		PaddingLeft(padding).
-		PaddingRight(padding).
-		Border(border).
-		BorderForeground(borderColor)
 
 	return Model{
-		Viewport:    viewPort,
-		Active:      active,
-		Borderless:  borderless,
-		BorderColor: borderColor,
+		Viewport: viewPort,
+		Active:   active,
 	}
 }
 
@@ -115,27 +97,10 @@ func (m *Model) SetFileName(filename string) tea.Cmd {
 	return convertImageToStringCmd(m.Viewport.Width, filename)
 }
 
-// SetBorderColor sets the current color of the border.
-func (m *Model) SetBorderColor(color lipgloss.AdaptiveColor) {
-	m.BorderColor = color
-}
-
 // SetSize sets the size of the bubble.
 func (m *Model) SetSize(w, h int) tea.Cmd {
 	m.Viewport.Width = w
 	m.Viewport.Height = h
-
-	border := lipgloss.NormalBorder()
-
-	if m.Borderless {
-		border = lipgloss.HiddenBorder()
-	}
-
-	m.Viewport.Style = lipgloss.NewStyle().
-		PaddingLeft(padding).
-		PaddingRight(padding).
-		Border(border).
-		BorderForeground(m.BorderColor)
 
 	if m.FileName != "" {
 		return convertImageToStringCmd(m.Viewport.Width, m.FileName)
@@ -198,17 +163,5 @@ func (m Model) Update(msg tea.Msg) (Model, tea.Cmd) {
 
 // View returns a string representation of the code bubble.
 func (m Model) View() string {
-	border := lipgloss.NormalBorder()
-
-	if m.Borderless {
-		border = lipgloss.HiddenBorder()
-	}
-
-	m.Viewport.Style = lipgloss.NewStyle().
-		PaddingLeft(padding).
-		PaddingRight(padding).
-		Border(border).
-		BorderForeground(m.BorderColor)
-
 	return m.Viewport.View()
 }
