@@ -4,7 +4,7 @@ import (
 	"github.com/charmbracelet/bubbles/key"
 	"github.com/charmbracelet/bubbles/textinput"
 	tea "github.com/charmbracelet/bubbletea"
-	"github.com/mistakenelf/teacup/dirfs"
+	"github.com/mistakenelf/teacup/filesystem"
 )
 
 const (
@@ -50,7 +50,7 @@ func (m Model) Update(msg tea.Msg) (Model, tea.Cmd) {
 
 				cmds = append(cmds, statusCmd, tea.Sequence(
 					deleteItemCmd(selectedItem.fileName),
-					getDirectoryListingCmd(dirfs.CurrentDirectory, m.showHidden, m.showIcons),
+					getDirectoryListingCmd(filesystem.CurrentDirectory, m.showHidden, m.showIcons),
 				))
 
 				m.state = idleState
@@ -65,7 +65,7 @@ func (m Model) Update(msg tea.Msg) (Model, tea.Cmd) {
 
 				cmds = append(cmds, statusCmd, tea.Sequence(
 					moveItemCmd(m.itemToMove.path, m.itemToMove.shortName),
-					getDirectoryListingCmd(dirfs.CurrentDirectory, m.showHidden, m.showIcons),
+					getDirectoryListingCmd(filesystem.CurrentDirectory, m.showHidden, m.showIcons),
 				))
 
 				m.state = idleState
@@ -89,7 +89,7 @@ func (m Model) Update(msg tea.Msg) (Model, tea.Cmd) {
 
 				cmds = append(cmds, statusCmd, tea.Sequence(
 					copyItemCmd(selectedItem.fileName),
-					getDirectoryListingCmd(dirfs.CurrentDirectory, m.showHidden, m.showIcons),
+					getDirectoryListingCmd(filesystem.CurrentDirectory, m.showHidden, m.showIcons),
 				))
 			}
 		case key.Matches(msg, zipItemKey):
@@ -101,7 +101,7 @@ func (m Model) Update(msg tea.Msg) (Model, tea.Cmd) {
 
 				cmds = append(cmds, statusCmd, tea.Sequence(
 					zipItemCmd(selectedItem.fileName),
-					getDirectoryListingCmd(dirfs.CurrentDirectory, m.showHidden, m.showIcons),
+					getDirectoryListingCmd(filesystem.CurrentDirectory, m.showHidden, m.showIcons),
 				))
 			}
 		case key.Matches(msg, unzipItemKey):
@@ -113,7 +113,7 @@ func (m Model) Update(msg tea.Msg) (Model, tea.Cmd) {
 
 				cmds = append(cmds, statusCmd, tea.Sequence(
 					unzipItemCmd(selectedItem.fileName),
-					getDirectoryListingCmd(dirfs.CurrentDirectory, m.showHidden, m.showIcons),
+					getDirectoryListingCmd(filesystem.CurrentDirectory, m.showHidden, m.showIcons),
 				))
 			}
 		case key.Matches(msg, createFileKey):
@@ -160,15 +160,15 @@ func (m Model) Update(msg tea.Msg) (Model, tea.Cmd) {
 		case key.Matches(msg, toggleHiddenKey):
 			if !m.input.Focused() {
 				m.showHidden = !m.showHidden
-				cmds = append(cmds, getDirectoryListingCmd(dirfs.CurrentDirectory, m.showHidden, m.showIcons))
+				cmds = append(cmds, getDirectoryListingCmd(filesystem.CurrentDirectory, m.showHidden, m.showIcons))
 			}
 		case key.Matches(msg, homeShortcutKey):
 			if !m.input.Focused() {
-				cmds = append(cmds, getDirectoryListingCmd(dirfs.HomeDirectory, m.showHidden, m.showIcons))
+				cmds = append(cmds, getDirectoryListingCmd(filesystem.HomeDirectory, m.showHidden, m.showIcons))
 			}
 		case key.Matches(msg, rootShortcutKey):
 			if !m.input.Focused() {
-				cmds = append(cmds, getDirectoryListingCmd(dirfs.RootDirectory, m.showHidden, m.showIcons))
+				cmds = append(cmds, getDirectoryListingCmd(filesystem.RootDirectory, m.showHidden, m.showIcons))
 			}
 		case key.Matches(msg, copyToClipboardKey):
 			if !m.input.Focused() {
@@ -208,7 +208,7 @@ func (m Model) Update(msg tea.Msg) (Model, tea.Cmd) {
 
 				cmds = append(cmds, statusCmd, tea.Sequence(
 					createFileCmd(m.input.Value()),
-					getDirectoryListingCmd(dirfs.CurrentDirectory, m.showHidden, m.showIcons),
+					getDirectoryListingCmd(filesystem.CurrentDirectory, m.showHidden, m.showIcons),
 				))
 			case createDirectoryState:
 				statusCmd := m.list.NewStatusMessage(
@@ -217,7 +217,7 @@ func (m Model) Update(msg tea.Msg) (Model, tea.Cmd) {
 
 				cmds = append(cmds, statusCmd, tea.Sequence(
 					createDirectoryCmd(m.input.Value()),
-					getDirectoryListingCmd(dirfs.CurrentDirectory, m.showHidden, m.showIcons),
+					getDirectoryListingCmd(filesystem.CurrentDirectory, m.showHidden, m.showIcons),
 				))
 			case renameItemState:
 				statusCmd := m.list.NewStatusMessage(
@@ -226,7 +226,7 @@ func (m Model) Update(msg tea.Msg) (Model, tea.Cmd) {
 
 				cmds = append(cmds, statusCmd, tea.Sequence(
 					renameItemCmd(selectedItem.fileName, m.input.Value()),
-					getDirectoryListingCmd(dirfs.CurrentDirectory, m.showHidden, m.showIcons),
+					getDirectoryListingCmd(filesystem.CurrentDirectory, m.showHidden, m.showIcons),
 				))
 			}
 

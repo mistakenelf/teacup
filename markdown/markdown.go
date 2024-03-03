@@ -9,7 +9,7 @@ import (
 	tea "github.com/charmbracelet/bubbletea"
 	"github.com/charmbracelet/glamour"
 	"github.com/charmbracelet/lipgloss"
-	"github.com/mistakenelf/teacup/dirfs"
+	"github.com/mistakenelf/teacup/filesystem"
 )
 
 type renderMarkdownMsg string
@@ -53,7 +53,7 @@ func RenderMarkdown(width int, content string) (string, error) {
 // renderMarkdownCmd renders text as pretty markdown.
 func renderMarkdownCmd(width int, filename string) tea.Cmd {
 	return func() tea.Msg {
-		content, err := dirfs.ReadFileContent(filename)
+		content, err := filesystem.ReadFileContent(filename)
 		if err != nil {
 			return errorMsg(err)
 		}

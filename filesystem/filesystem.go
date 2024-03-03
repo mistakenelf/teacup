@@ -1,6 +1,6 @@
-// Package dirfs is a collection of various different filesystem
+// Package filesystem is a collection of various different filesystem
 // helper functions.
-package dirfs
+package filesystem
 
 import (
 	"archive/zip"
@@ -186,7 +186,7 @@ func Zip(name string) error {
 		err = srcFile.Close()
 	}()
 
-  fileExtension := filepath.Ext(name)
+	fileExtension := filepath.Ext(name)
 	splitFileName := strings.Split(name, "/")
 	fileName := splitFileName[len(splitFileName)-1]
 	switch {
@@ -200,7 +200,7 @@ func Zip(name string) error {
 		output = fmt.Sprintf("%s_%d.zip", splitName[0], time.Now().Unix())
 	default:
 		output = fmt.Sprintf("%s_%d.zip", fileName, time.Now().Unix())
-	}	
+	}
 
 	newfile, err := os.Create(filepath.Clean(output))
 	if err != nil {
@@ -368,10 +368,6 @@ func Unzip(name string) error {
 		}
 
 		err = outputFile.Close()
-		if err != nil {
-			return errors.Unwrap(err)
-		}
-
 		if err != nil {
 			return errors.Unwrap(err)
 		}

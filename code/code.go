@@ -11,7 +11,7 @@ import (
 	"github.com/charmbracelet/bubbles/viewport"
 	tea "github.com/charmbracelet/bubbletea"
 	"github.com/charmbracelet/lipgloss"
-	"github.com/mistakenelf/teacup/dirfs"
+	"github.com/mistakenelf/teacup/filesystem"
 )
 
 type syntaxMsg string
@@ -34,7 +34,7 @@ func Highlight(content, extension, syntaxTheme string) (string, error) {
 // readFileContentCmd reads the content of the file.
 func readFileContentCmd(fileName, syntaxTheme string) tea.Cmd {
 	return func() tea.Msg {
-		content, err := dirfs.ReadFileContent(fileName)
+		content, err := filesystem.ReadFileContent(fileName)
 		if err != nil {
 			return errorMsg(err)
 		}
