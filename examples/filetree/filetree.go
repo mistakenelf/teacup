@@ -2,31 +2,24 @@ package main
 
 import (
 	"log"
+	"os"
 
 	tea "github.com/charmbracelet/bubbletea"
-	"github.com/charmbracelet/lipgloss"
 	"github.com/mistakenelf/teacup/filetree"
 )
 
+// model represents the properties of the UI.
 type model struct {
 	filetree filetree.Model
 }
 
 // New creates a new instance of the UI.
 func New() model {
-	filetreeModel := filetree.New(
-		true,
-		true,
-		"",
-		"",
-		lipgloss.AdaptiveColor{Light: "#000000", Dark: "63"},
-		lipgloss.AdaptiveColor{Light: "#000000", Dark: "63"},
-		lipgloss.AdaptiveColor{Light: "63", Dark: "63"},
-		lipgloss.AdaptiveColor{Light: "#ffffff", Dark: "#ffffff"},
-	)
+	wd, _ := os.Getwd()
+	filetree := filetree.New(wd, true)
 
 	return model{
-		filetree: filetreeModel,
+		filetree: filetree,
 	}
 }
 
@@ -43,11 +36,9 @@ func (m model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 	)
 
 	switch msg := msg.(type) {
-	case tea.WindowSizeMsg:
-		m.filetree.SetSize(msg.Width, msg.Height)
 	case tea.KeyMsg:
 		switch msg.String() {
-		case "ctrl+c":
+		case "ctrl+c", "esc", "q":
 			cmds = append(cmds, tea.Quit)
 		}
 	}
@@ -65,7 +56,7 @@ func (m model) View() string {
 
 func main() {
 	b := New()
-	p := tea.NewProgram(b, tea.WithAltScreen())
+	p := tea.NewProgram(&b, tea.WithAltScreen())
 
 	if _, err := p.Run(); err != nil {
 		log.Fatal(err)
