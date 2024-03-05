@@ -2,7 +2,6 @@ package main
 
 import (
 	"log"
-	"os"
 
 	tea "github.com/charmbracelet/bubbletea"
 	"github.com/mistakenelf/teacup/filetree"
@@ -15,8 +14,7 @@ type model struct {
 
 // New creates a new instance of the UI.
 func New() model {
-	wd, _ := os.Getwd()
-	filetree := filetree.New(wd, true)
+	filetree := filetree.New()
 
 	return model{
 		filetree: filetree,
